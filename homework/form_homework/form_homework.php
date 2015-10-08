@@ -11,8 +11,8 @@
     <input type="text" name="name" size="30" value=" "><br>
     性別：<br>
     <select name="sex" >
-      <option value="1">男</option>
-      <option value="2">女</option>
+      <option value="男">男</option>
+      <option value="女">女</option>
     </select><br>
     年齢：<br>
       <select name="age">
@@ -23,7 +23,7 @@
       </select><br>
     メールアドレス：<br>
     <input type="text" name="mail" size="30" value=" "><br>
-    パスワード；<br>
+    パスワード：<br>
     <input type="password" name="password" value="" size="30"><br>
     一言コメント：<br>
     <textarea name="comment" cols="30" rows="5"></textarea><br>
