@@ -26,7 +26,7 @@
     パスワード；<br>
     <input type="password" name="password" value="" size="30"><br>
     一言コメント：<br>
-    <input type="textarea" name="comment" cols="30" rows="5"><br>
+    <textarea name="comment" cols="30" rows="5"></textarea><br>
     <input type="submit" name="send" value="同意して送信" style="width:100px">
   </form>
   <h2>搾取した個人情報は悪意を持って扱います</h2>
