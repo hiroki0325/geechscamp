@@ -22,7 +22,7 @@
 
 <?php
     //データの取得
-    $sql = 'SELECT * FROM posts ORDER BY `created` DESC';
+    $sql = 'SELECT * FROM posts ORDER BY `created` DESC'; //逆シングルクオート
     $posts = mysqli_query($db,$sql) or die(mysqli_error($db));
 ?>
 
