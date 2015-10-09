@@ -10,7 +10,7 @@
     date_default_timezone_set('Asia/Tokyo');
     // $time = date("Y-m-d H:i:s");
     //DBにデータを送信
-    $sql = sprintf(' INSERT INTO posts SET name="%s", sex="%s", age="%s", mail="%s", password="%s", comment="%s"' ,
+    $sql = sprintf(' INSERT INTO posts (name,sex,age,mail,password,comment,created) VALUE ("%s","%s","%s","%s","%s","%s",NOW())' ,
         mysqli_real_escape_string ($db , $_POST['name']),
         mysqli_real_escape_string ($db , $_POST['sex']),
         mysqli_real_escape_string ($db , $_POST['age']),
