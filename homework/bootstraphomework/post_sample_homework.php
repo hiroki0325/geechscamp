@@ -12,47 +12,40 @@
     <!-- Custom styles for this template -->
     <link href="assets/css/main.css" rel="stylesheet">
     <link href="assets/css/font-awesome.min.css" rel="stylesheet">
+    <link href="assets/css/form_homework.css" rel="stylesheet">
 
     <!-- JavaScriptファイルを読み込むためのリンクタグ -->
     <!-- 直接WEB上にあるファイルをURLで指定して読み込む -->
     <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
     <!-- ファイルのパスを指定して読み込む -->
     <script src="assets/js/chart.js"></script>
+    <script src="assets/js/form_homework.js"></script>
 
 </head>
 <body>
   <div class="container">
-    <div class="row">
-      <div class="col-xs-8 col-xs-offset-2 centered">
-        <h1>ポストサンプル</h1>
-      </div>
+    <div class="col-xs-8 col-xs-offset-2 centered">
+      <form action="answer.php" method="post">
+        <div class="form-area">
+
+          <div class="row">
+            <h1>ポストサンプル</h1><br>
+          </div>
+          <div class="row form-group">
+            <input type="text" name="nickname" class="form-control" placeholder="ニックネーム">
+          </div>
+          <br>
+          <div class="row form-group">
+            <textarea maxlength="140" rows="7" name="comment" placeholder="つぶやく" class="form-control"></textarea>
+          </div>
+          <div class="row form-group">
+          <br><input type="submit" class="btn btn-primary pull-right">
+          </div>
+        </div>
+      </form>
     </div>
   </div>
 
-  <form action="answer.php" method="post">
-
-    <div class="container">
-      <div class="row">
-        <div class="col-xs-8 col-xs-offset-2 centered">
-          ニックネーム：
-        <input type="text" name="nickname">
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-xs-8 col-xs-offset-2 centered">
-        ひとこと：
-        <textarea rows="4" cols="40" name="comment" placeholder="つぶやく"></textarea>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-xs-8 col-xs-offset-2 centered">
-          <input type="submit">
-        </div>
-      </div>
-    </div>
-  </form>
   <!-- Bootstrap core JavaScript
  ================================================== -->
   <!-- Placed at the end of the document so the pages load faster -->
