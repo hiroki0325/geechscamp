@@ -1,4 +1,13 @@
 <?php
+    // セッションを使うことを定義
+    session_start();
+
+    // セッションへデータの保存
+    $_SESSION["site_title"] = "Online bbs";
+
+    // セッションからデータの取得
+    echo $_SESSION["nickname"];
+
     // DBへの接続
     $db = mysqli_connect('localhost','root','mysql','online_bbs');
     mysqli_set_charset($db,'utf8');
@@ -19,6 +28,9 @@
             $nickname,
             $comment
       );
+
+      $_SESSION["nickname"] = $nickname;
+
       mysqli_query($db,$sql);
     }
 ?>
@@ -27,124 +39,109 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>セブ掲示版</title>
+  <title>セブ掲示板</title>
 
   <!-- CSS -->
   <link rel="stylesheet" href="assets/css/bootstrap.css">
+  <link rel="stylesheet" href="assets/font-awesome/css/font-awesome.css">
   <link rel="stylesheet" href="assets/css/form.css">
+  <link rel="stylesheet" href="assets/css/timeline.css">
+  <link rel="stylesheet" href="assets/css/main.css">
 </head>
+
 <body>
+  <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+          <!-- Brand and toggle get grouped for better mobile display -->
+          <div class="navbar-header page-scroll">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                  <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand" href="#page-top"><span class="strong-title"><i class="fa fa-github"></i></span>Online bbs</a>
+          </div>
+          <!-- Collect the nav links, forms, and other content for toggling -->
+          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+              <ul class="nav navbar-nav navbar-right">
+                  <li class="hidden">
+                      <a href="#page-top"></a>
+                  </li>
+                  <li class="page-scroll">
+                      <a href="#portfolio">Portfolio</a>
+                  </li>
+                  <li class="page-scroll">
+                      <a href="#about">About</a>
+                  </li>
+                  <li class="page-scroll">
+                      <a href="#contact">Contact</a>
+                  </li>
+              </ul>
+          </div>
+          <!-- /.navbar-collapse -->
+      </div>
+      <!-- /.container-fluid -->
+  </nav>
+
+
   <div class="container">
     <div class="row">
-      <div class="col-md-4">
-        <h1>ひとこと掲示場</h1>
+      <div class="col-md-4 content-margin-top">
         <form action="bbs.php" method="post">
-          <div>
-            ニックネーム : <input type="text" name="nickname">
+          <div class="form-group">
+            <div class="input-group">
+              <input type="text" name="nickname" class="form-control" id="validate-text" placeholder="nickname" required>
+              <span class="input-group-addon danger"><span class="glyphicon glyphicon-remove"></span></span>
+            </div>
           </div>
 
-          <div>
-            ひとこと : <input type="text" name="comment">
+          <div class="form-group">
+            <div class="input-group" data-validate="length" data-length="4">
+              <textarea type="text" class="form-control" name="comment" id="validate-length" placeholder="comment" required></textarea>
+              <span class="input-group-addon danger"><span class="glyphicon glyphicon-remove"></span></span>
+            </div>
           </div>
 
-          <div>
-            <input type="submit" value="つぶやく">
-          </div>
+          <button type="submit" class="btn btn-primary col-xs-12" disabled>つぶやく</button>
         </form>
       </div>
 
-      <div class="col-md-8">
-        <?php
+      <div class="col-md-8 content-margin-top">
+      <?php
             // データの取得と表示
-            $sql = 'SELECT * FROM posts ORDER BY `created` DESC';
-            $posts = mysqli_query($db, $sql) or die(mysqli_error($db));
-        ?>
+          $sql = 'SELECT * FROM posts ORDER BY `created` DESC';
+          $posts = mysqli_query($db, $sql) or die(mysqli_error($db));
+      ?>
 
-        <ul>
+          <div class="timeline-centered">
+
           <?php while ($post = mysqli_fetch_assoc($posts)): ?>
-          <li><?php echo $post['nickname'] ?>: <?php echo $post['comment'] ?></li>
+          <article class="timeline-entry">
+              <div class="timeline-entry-inner">
+                  <div class="timeline-icon bg-success">
+                      <i class="entypo-feather"><i class="fa fa-odnoklassniki"></i></i>
+                  </div>
+                  <div class="timeline-label">
+                      <h2><a href="#"><?php echo $post['nickname'] ?></a> <span><?php echo $post['created'] ?></span></h2>
+                      <p><?php echo $post['comment'] ?></p>
+                  </div>
+              </div>
+          </article>
           <?php endwhile; ?>
-        </ul>
+
+          <article class="timeline-entry begin">
+              <div class="timeline-entry-inner">
+                  <div class="timeline-icon" style="-webkit-transform: rotate(-90deg); -moz-transform: rotate(-90deg);">
+                      <i class="entypo-flight"></i> +
+                  </div>
+              </div>
+          </article>
+      </div>
       </div>
     </div>
   </div>
 
-
-
-  <div class="container">
-    <div class="row">
-      <h2>Input Validation + Colorful Input Groups</h2>
-    </div>
-
-      <div class="row">
-          <div class="col-sm-offset-4 col-sm-4">
-              <form method="post">
-          <div class="form-group">
-                <label for="validate-text">Validate Text</label>
-            <div class="input-group">
-              <input type="text" class="form-control" name="validate-text" id="validate-text" placeholder="Validate Text" required>
-              <span class="input-group-addon danger"><span class="glyphicon glyphicon-remove"></span></span>
-            </div>
-          </div>
-          <div class="form-group">
-                <label for="validate-optional">Optional</label>
-            <div class="input-group">
-              <input type="text" class="form-control" name="validate-optional" id="validate-optional" placeholder="Optional">
-              <span class="input-group-addon info"><span class="glyphicon glyphicon-asterisk"></span></span>
-            </div>
-          </div>
-            <div class="form-group">
-                <label for="validate-optional">Already Validated!</label>
-              <div class="input-group">
-              <input type="text" class="form-control" name="validate-text" id="validate-text" placeholder="Validate Text" value="Validated!" required>
-              <span class="input-group-addon danger"><span class="glyphicon glyphicon-remove"></span></span>
-            </div>
-          </div>
-          <div class="form-group">
-                <label for="validate-email">Validate Email</label>
-            <div class="input-group" data-validate="email">
-              <input type="text" class="form-control" name="validate-email" id="validate-email" placeholder="Validate Email" required>
-              <span class="input-group-addon danger"><span class="glyphicon glyphicon-remove"></span></span>
-            </div>
-          </div>
-            <div class="form-group">
-                <label for="validate-phone">Validate Phone</label>
-            <div class="input-group" data-validate="phone">
-              <input type="text" class="form-control" name="validate-phone" id="validate-phone" placeholder="(814) 555-1234" required>
-              <span class="input-group-addon danger"><span class="glyphicon glyphicon-remove"></span></span>
-            </div>
-          </div>
-              <div class="form-group">
-                <label for="validate-length">Minimum Length</label>
-            <div class="input-group" data-validate="length" data-length="5">
-              <textarea type="text" class="form-control" name="validate-length" id="validate-length" placeholder="Validate Length" required></textarea>
-              <span class="input-group-addon danger"><span class="glyphicon glyphicon-remove"></span></span>
-            </div>
-          </div>
-                  <div class="form-group">
-                  <label for="validate-select">Validate Select</label>
-            <div class="input-group">
-                          <select class="form-control" name="validate-select" id="validate-select" placeholder="Validate Select" required>
-                              <option value="">Select an item</option>
-                              <option value="item_1">Item 1</option>
-                              <option value="item_2">Item 2</option>
-                              <option value="item_3">Item 3</option>
-                          </select>
-              <span class="input-group-addon danger"><span class="glyphicon glyphicon-remove"></span></span>
-            </div>
-          </div>
-                <div class="form-group">
-                <label for="validate-number">Validate Number</label>
-            <div class="input-group" data-validate="number">
-              <input type="text" class="form-control" name="validate-number" id="validate-number" placeholder="Validate Number" required>
-              <span class="input-group-addon danger"><span class="glyphicon glyphicon-remove"></span></span>
-            </div>
-          </div>
-                  <button type="submit" class="btn btn-primary col-xs-12" disabled>Submit</button>
-              </form>
-          </div>
-      </div>
-  </div>
 
 
 
