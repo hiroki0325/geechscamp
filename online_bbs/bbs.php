@@ -3,10 +3,12 @@
     session_start();
 
     // セッションへデータの保存
-    $_SESSION["site_title"] = "Online bbs";
+    // $_SESSION["site_title"] = "Online bbs";
 
-    // セッションからデータの取得
-    echo $_SESSION["nickname"];
+    // if (isset($_SESSION["nickname"])) {
+    //   // セッションからデータの取得
+    //    echo $_SESSION["nickname"];
+    // }
 
     // DBへの接続
     $db = mysqli_connect('localhost','root','mysql','online_bbs');
@@ -29,9 +31,11 @@
             $comment
       );
 
+      // セッションに保存
       $_SESSION["nickname"] = $nickname;
 
       mysqli_query($db,$sql);
+      header('Location: bbs.php');
     }
 ?>
 
@@ -68,14 +72,14 @@
                   <li class="hidden">
                       <a href="#page-top"></a>
                   </li>
-                  <li class="page-scroll">
+<!--                   <li class="page-scroll">
                       <a href="#portfolio">Portfolio</a>
                   </li>
                   <li class="page-scroll">
                       <a href="#about">About</a>
                   </li>
                   <li class="page-scroll">
-                      <a href="#contact">Contact</a>
+                      <a href="#contact">Contact</a> -->
                   </li>
               </ul>
           </div>
@@ -91,7 +95,14 @@
         <form action="bbs.php" method="post">
           <div class="form-group">
             <div class="input-group">
-              <input type="text" name="nickname" class="form-control" id="validate-text" placeholder="nickname" required>
+              <?php
+                  if (isset($_SESSION["nickname"])){
+                      echo sprintf('<input type ="text" name="nickname" value="%s" class="form-control" id="validate-text" placeholder="nickname" required>',
+                      $_SESSION["nickname"]);
+                } else{
+                  echo '<input type ="text" name="nickname" class="form-control" id="validate-text" placeholder="nickname" required>' ;
+                }
+              ?>
               <span class="input-group-addon danger"><span class="glyphicon glyphicon-remove"></span></span>
             </div>
           </div>
