@@ -1,5 +1,6 @@
 <?php
     session_start();
+    require('../dbconnect.php');
 
     if (!empty($_POST)) {
       // エラー項目の確認
@@ -22,15 +23,43 @@
           $error['image'] = 'type' ;
         }
       }
+
+      // 重複アカウントのチェック
+      if (!empty($_POST)) {
+          if (empty($error)) {
+            $sql = sprintf('SELECT COUNT(*) AS cnt FROM members WHERE email="%s"',
+              mysqli_real_escape_string($db, $_POST["email"])
+              );
+            $record = mysqli_query($db, $sql) or die(mysqli_error($db));
+            $table = mysqli_fetch_assoc($record);
+            if ($table['cnt'] > 0 ){
+              $error['email'] = 'duplicate';
+            }
+          }
+      }
+
       if (empty($error)) {
         // 画像をアップロードする
-        $image = date('YmdHis') . $_FILES['image']['name'] ;
-        move_uploaded_file($_FILES['image']['tmp_name']. '../member_picture/' . $image) ;
+        $image = date('YmdHis').$_FILES['image']['name'] ;
+        move_uploaded_file($_FILES['image']['tmp_name'],'../member_picture/'.$image) ;
         $_SESSION['join'] = $_POST ;
         $_SESSION['join']['image']= $image ;
         header('Location: check.php');
         exit();
       }
+    }
+
+    // 書き直し
+    if (!empty($_SESSION['join'])) {
+        if (!empty($_REQUEST['action'])) {
+            if ($_REQUEST['action'] == 'rewrite') {
+              $_POST = $_SESSION['join'];
+              $ext = substr($_SESSION['join']['image'], -3);
+              if ($ext == 'jpg' || $ext == 'gif') {
+                  $fileName = 'rewrite';
+              }
+            }
+        }
     }
 ?>
 
@@ -72,6 +101,9 @@
               <?php if ($error['email'] == 'blank') : ?>
               <p class="error">* メールアドレスを入力してください</p>
               <?php endif ; ?>
+              <?php if ($error['email'] == 'duplicate'): ?>
+                <p class="error">* 指定されたメールアドレスはすでに登録されています</p>
+              <?php endif ?>
             <?php endif ; ?>
           </dd>
           <dt>パスワード<span class="required">必須</span></dt>
@@ -96,13 +128,13 @@
           <dd>
             <input type="file" name="image" size="35">
             <?php if (isset($error['image'])): ?>
-              <?php if ($error['image'] =='type'): ?>
+              <?php if ($error['image'] == 'type'): ?>
               <p class="error">* 写真などは「.gif」または「.jpg」の画像を指定してください</p>
               <?php endif ; ?>
             <?php endif ; ?>
-            <?php if ($fileName !='' ): ?>
+            <?php if ( isset($fileName) && $fileName !='' ): ?>
               <?php if (empty($error['image'])): ?>
-              <p class="error">* 恐れ入りますが、画像を改めて指定してください</p>
+                  <p class="error">* 恐れ入りますが、画像を改めて指定してください</p>
               <?php endif ; ?>
             <?php endif ; ?>
 
