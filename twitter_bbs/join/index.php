@@ -1,5 +1,6 @@
 <?php
     session_start();
+    require('../dbconnect.php');
 
     // htmlspecialcharsのショートカット
     function h($value) {
@@ -41,7 +42,21 @@
               $error["image"] = "type";
           }
       }
+
+      // 重複アカウントチェック
+      if(empty($error)) {
+        $sql = sprintf('SELECT COUNT(*) AS cnt FROM members WHERE email="%s"',
+          mysqli_real_escape_string($db,$_POST['email'])
+          );
+        $record = mysqli_query($db,$sql) or die(mysqli_error($db));
+        $table = mysqli_fetch_assoc($record);
+        if($table['cnt'] > 0) {
+          $error['email'] = 'duplicate';
+        }
+      }
+
       ////////////////////////////////
+
 
       // エラーがなければ次のページに行くための処理
       if (empty($error)) {
@@ -56,6 +71,14 @@
         exit();
       }
 
+    }
+
+    // 書き直し処理
+    if (isset($_REQUEST['action'])) {
+        if($_REQUEST['action'] == 'rewrite'){
+            $_POST = $_SESSION['join'];
+            $error['rewrite'] = true;
+        }
     }
 
 ?>
@@ -110,6 +133,9 @@
             <?php if ($error["email"] == 'blank'): ?>
                 <p class="error">* メールアドレスを入力してください</p>
             <?php endif ;?>
+            <?php if ($error['email'] == 'duplicate'): ?>
+            <p class="error">* 指定されたメールアドレスはすでに登録されています</p>
+            <?php endif; ?>
         <?php endif; ?>
     </div>
     <div>
