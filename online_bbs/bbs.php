@@ -11,7 +11,7 @@
     // }
 
     // DBへの接続
-    $db = mysqli_connect('localhost','root','mysql','online_bbs');
+    $db = mysqli_connect('mysql101.phy.lolipop.lan','LAA0670496','mysql','LAA0670496-onlinebbs');
     mysqli_set_charset($db,'utf8');
 ?>
 
