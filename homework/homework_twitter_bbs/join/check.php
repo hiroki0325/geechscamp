@@ -40,6 +40,8 @@
   <form action="" method="post">
     <!-- ↓ToDo これはなんだ？ -->
     <input type="hidden" name="action" value="submit">
+    <!-- ⇒submitボタンを押した時に$_POSTを空にしないために必要だった -->
+    <!-- submitボタンだけでは、$_POSTの中には何も送信されない -->
     <dl>
       <dt>ニックネーム</dt>
       <dd>
