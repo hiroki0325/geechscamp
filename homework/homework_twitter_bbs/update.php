@@ -27,7 +27,7 @@
     $record = mysqli_query($db, $sql) or die(mysqli_error($db));
     $table = mysqli_fetch_assoc($record);
     if ($table['member_id'] == $_SESSION['id']) {
-      // 編集
+      // 編集処理
       if (!empty($_POST)) {
         if ($_POST['message'] != '') {
           $sql = sprintf('UPDATE posts SET message="%s", modified=NOW() WHERE id=%d',
