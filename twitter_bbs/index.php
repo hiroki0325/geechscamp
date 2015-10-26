@@ -26,9 +26,10 @@
   // 投稿を記録する
   if (!empty($_POST)) {
     if ($_POST['message'] != '') {
-      $sql = sprintf('INSERT INTO posts SET member_id=%d, message="%s", created=NOW()',
+      $sql = sprintf('INSERT INTO posts SET member_id=%d, message="%s", reply_post_id=%d,created=NOW()',
         mysqli_real_escape_string($db, $member['id']),
-        mysqli_real_escape_string($db, $_POST['message'])
+        mysqli_real_escape_string($db, $_POST['message']),
+        mysqli_real_escape_string($db, $_POST['reply_post_id'])
         );
 
       mysqli_query($db, $sql) or die(mysqli_error($db));
@@ -46,6 +47,17 @@
 
   // $post = mysqli_fetch_assoc($posts);
   // var_dump($post);
+
+  // 返信の場合
+  if (isset($_REQUEST['res'])) {
+    $sql = sprintf('SELECT m.nickname, m.picture, p.* FROM members m, posts p WHERE m.id=p.member_id AND p.id=%d ORDER BY p.created DESC',
+        mysqli_real_escape_string($db, $_REQUEST['res'])
+      );
+    $record = mysqli_query($db, $sql) or die(mysqli_error($db));
+    $table = mysqli_fetch_assoc($record);
+    $message = '@'.$table['nickname'].' '.$table['message'];
+  }
+
 ?>
 
 <!DOCTYPE html>
@@ -65,7 +77,12 @@
   <form action="" method="post">
     <div>
       <label for=""><?php echo htmlspecialchars($member['nickname']); ?>さん、メッセージをどうぞ</label><br>
-      <textarea name="message" cols="50" rows="5"></textarea>
+      <?php if (isset($_REQUEST['res'])): ?>
+        <textarea name="message" cols="50" rows="5"><?php echo h($message); ?></textarea>
+        <input type="hidden" name="reply_post_id" value="<?php echo h($_REQUEST['res'])?>">
+      <?php else: ?>
+        <textarea name="message" cols="50" rows="5"></textarea>
+      <?php endif; ?>
     </div>
 
     <div>
@@ -76,7 +93,11 @@
   <?php while ($post = mysqli_fetch_assoc($posts)): ?>
     <div class="msg">
       <img src="member_picture/<?php echo h($post['picture']); ?>" width="48" height="48">
-      <p><?php echo h($post['message']); ?><span class="name">(<?php echo h($post['nickname']); ?>)</span></p>
+      <p>
+        <?php echo h($post['message']); ?><span class="name">(<?php echo h($post['nickname']); ?>)</span>
+        [<a href="index.php?res=<?php echo h($post['id']); ?>">Re</a>]
+
+      </p>
       <p class="day">
         <?php echo h($post['created']); ?>
         <?php if ($_SESSION['id'] == $post['member_id']): ?>

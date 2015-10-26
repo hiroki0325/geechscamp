@@ -95,6 +95,7 @@
     </div>
     <div id="content">
       <div>
+        <a href="change.php">ユーザー情報を編集する</a>｜
         <a href="logout.php">ログアウト</a>
       </div>
       <form action="" method="post">

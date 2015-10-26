@@ -1,8 +1,9 @@
 <?php
   session_start();
 
-  // セッション情報を削除
+  // 設定したセッション情報を削除
   $_SESSION = array();
+  // PCの仕組み上送られてしまうセッション情報を削除
   if (ini_get("session.use_cookies")) {
     $params = session_get_cookie_params();
     setcookie(session_name(), '', time() - 42000,
