@@ -15,7 +15,8 @@
 
     if (!empty($_POST)) {
       // 登録処理をする
-      // ToDoここの書き方がくっそいけてない
+      // ToDoここの書き方がくっそいけてない気がする
+      // ⇒上にif文を作り、そこで変更していない場合は今の値を入れるようにしてあげると良い。
       if ( $_SESSION['join']['modified_password'] == '' && $_SESSION['join']['image'] == '') {
         $sql = sprintf('UPDATE members SET name="%s", email="%s", modified=NOW() WHERE id=%d',
                     mysqli_real_escape_string($db, $_SESSION['join']['name']),

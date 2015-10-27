@@ -16,6 +16,9 @@
       if ($_POST['current_password'] =='') {
         $error['current_password'] = 'blank' ;
       }
+      if ($_POST['modified_password'] != $_POST['modified_password2']) {
+        $error['modified_password'] = 'notsame' ;
+      }
       $fileName = $_FILES['image']['name'] ;
       if (!empty($fileName)) {
         $ext = substr($fileName, -3) ;
@@ -63,8 +66,8 @@
           $_SESSION['join'] = $_POST ;
           $_SESSION['join']['image']= '' ;
         }
-        header('Location: check.php');
-        exit();
+        // header('Location: check.php');
+        // exit();
       }
     }
 
@@ -136,7 +139,7 @@
               <?php endif ?>
             <?php endif ; ?>
           </dd>
-          <dt>現在のパスワード<span class="required">※必須</span></dt>
+          <dt>現在のパスワード<span class="required">必須</span></dt>
           <dd>
             <input type="password" name="current_password" size="10" maxlength="20">
             <?php if (isset($error['current_password'])): ?>
@@ -151,7 +154,7 @@
               <?php endif ; ?>
             <?php endif ; ?>
           </dd>
-          <dt>変更後のパスワード<span class="required">任意</span></dt>
+          <dt>変更後のパスワード<span class="option">任意</span></dt>
           <dd>
            <input type="password" name="modified_password" size="10" maxlength="20">
             <?php if (isset($error['modified_password'])): ?>
@@ -161,9 +164,16 @@
               <?php if ($error['modified_password'] == 'length') : ?>
               <p class="error">* 変更後のパスワードは4文字以上で入力してください</p>
               <?php endif ; ?>
+              <?php if ($error['modified_password'] == 'notsame') : ?>
+              <p class="error">* 変更後のパスワードが一致していません</p>
+              <?php endif ; ?>
             <?php endif ; ?>
           </dd>
-          <dt>写真など<span class="required">任意</span></dt>
+          <dt>変更後のパスワード(再)<span class="option"></span></dt>
+          <dd>
+           <input type="password" name="modified_password2" size="10" maxlength="20">
+          </dd>
+          <dt>写真など<span class="option">任意</span></dt>
           <dd>
             <input type="file" name="image" size="35">
             <?php if (isset($error['image'])): ?>
