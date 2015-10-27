@@ -15,20 +15,42 @@
 
     if (!empty($_POST)) {
       // 登録処理をする
+      // ToDoここの書き方がくっそいけてない
+      if ( $_SESSION['join']['modified_password'] == '' && $_SESSION['join']['image'] == '') {
+        $sql = sprintf('UPDATE members SET name="%s", email="%s", modified=NOW() WHERE id=%d',
+                    mysqli_real_escape_string($db, $_SESSION['join']['name']),
+                    mysqli_real_escape_string($db, $_SESSION['join']['email']),
+                    mysqli_real_escape_string($db, $_SESSION['id'])
+                    );
+      } elseif ($_SESSION['join']['image'] == '') {
+        $sql = sprintf('UPDATE members SET name="%s", email="%s", password="%s", modified=NOW() WHERE id=%d',
+            mysqli_real_escape_string($db, $_SESSION['join']['name']),
+            mysqli_real_escape_string($db, $_SESSION['join']['email']),
+            mysqli_real_escape_string($db, sha1($_SESSION['join']['modified_password'])),
+            mysqli_real_escape_string($db, $_SESSION['id'])
+            );
+      } elseif ($_SESSION['join']['modified_password'] == '') {
+        $sql = sprintf('UPDATE members SET name="%s", email="%s", picture="%s", modified=NOW() WHERE id=%d',
+              mysqli_real_escape_string($db, $_SESSION['join']['name']),
+              mysqli_real_escape_string($db, $_SESSION['join']['email']),
+              mysqli_real_escape_string($db, $_SESSION['join']['image']),
+              mysqli_real_escape_string($db, $_SESSION['id'])
+              );
+      } else {
       $sql = sprintf('UPDATE members SET name="%s", email="%s", password="%s", picture="%s", modified=NOW() WHERE id=%d',
             mysqli_real_escape_string($db, $_SESSION['join']['name']),
             mysqli_real_escape_string($db, $_SESSION['join']['email']),
-            mysqli_real_escape_string($db, sha1($_SESSION['join']['password'])),
+            mysqli_real_escape_string($db, sha1($_SESSION['join']['modified_password'])),
             mysqli_real_escape_string($db, $_SESSION['join']['image']),
             mysqli_real_escape_string($db, $_SESSION['id'])
             );
+      }
       mysqli_query($db, $sql) or die(mysqli_error($db));
       unset($_SESSION['join']);
 
       header('Location: index.php');
       exit();
     }
-
 ?>
 
 <!DOCTYPE html>
@@ -56,13 +78,15 @@
       <dd>
         【表示されません】
       </dd>
-      <?php $ext = substr($_SESSION['join']['image'], -3) ; ?>
-      <?php if($ext == 'jpg' || $ext == 'gif'): ?>
-        <dt>写真など</dt>
-        <dd>
-          <img src="member_picture/<?php echo h($_SESSION['join']['image']); ?>" width="100" height="100" alt="">
-        </dd>
-      <?php endif ; ?>
+      <?php if (isset($_SESSION['join']['image'])): ?>
+        <?php $ext = substr($_SESSION['join']['image'], -3) ; ?>
+        <?php if($ext == 'jpg' || $ext == 'gif'): ?>
+          <dt>写真など</dt>
+          <dd>
+            <img src="member_picture/<?php echo h($_SESSION['join']['image']); ?>" width="100" height="100" alt="">
+          </dd>
+        <?php endif ; ?>
+      <?php endif ?>
     </dl>
     <div><a href="change.php?action=rewrite">&laquo;&nbsp;書き直す</a>｜<input type="submit" value="登録する"></div>
   </form>

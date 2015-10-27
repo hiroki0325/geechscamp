@@ -10,11 +10,11 @@
       if ($_POST['email']=='') {
         $error['email'] = 'blank' ;
       }
-      if (strlen($_POST['password']) < 4 ) {
-        $error['password'] = 'length' ;
+      if (strlen($_POST['modified_password']) >0 && strlen($_POST['modified_password']) < 4 ) {
+        $error['modified_password'] = 'length' ;
       }
-      if ($_POST['password'] =='') {
-        $error['password'] = 'blank' ;
+      if ($_POST['current_password'] =='') {
+        $error['current_password'] = 'blank' ;
       }
       $fileName = $_FILES['image']['name'] ;
       if (!empty($fileName)) {
@@ -27,8 +27,9 @@
       // 重複アカウントのチェック
       if (!empty($_POST)) {
           if (empty($error)) {
-            $sql = sprintf('SELECT COUNT(*) AS cnt FROM members WHERE email="%s"',
-              mysqli_real_escape_string($db, $_POST["email"])
+            $sql = sprintf('SELECT COUNT(*) AS cnt FROM members WHERE email="%s" AND NOT id=%d',
+              mysqli_real_escape_string($db, $_POST["email"]),
+              mysqli_real_escape_string($db, $_SESSION["id"])
               );
             $record = mysqli_query($db, $sql) or die(mysqli_error($db));
             $table = mysqli_fetch_assoc($record);
@@ -36,14 +37,32 @@
               $error['email'] = 'duplicate';
             }
           }
+        }
+
+      // ユーザー情報の取得(現在のPWチェック用）
+      if (!empty($_POST)) {
+        $sql = sprintf('SELECT * FROM members WHERE id=%d AND password="%s"',
+          mysqli_real_escape_string($db, $_SESSION['id']),
+          mysqli_real_escape_string($db, sha1($_POST['current_password']))
+          );
+        $record = mysqli_query($db, $sql) or die(mysqli_error($db));
+        $table = mysqli_fetch_assoc($record);
+        if (empty($table)) {
+          $error['current_password'] = 'wrong';
+        }
       }
 
       if (empty($error)) {
         // 画像をアップロードする
-        $image = date('YmdHis').$_FILES['image']['name'] ;
-        move_uploaded_file($_FILES['image']['tmp_name'],'member_picture/'.$image) ;
-        $_SESSION['join'] = $_POST ;
-        $_SESSION['join']['image']= $image ;
+        if ($_FILES['image']['name'] != '') {
+          $image = date('YmdHis').$_FILES['image']['name'] ;
+          move_uploaded_file($_FILES['image']['tmp_name'],'member_picture/'.$image) ;
+          $_SESSION['join'] = $_POST ;
+          $_SESSION['join']['image']= $image ;
+        }else{
+          $_SESSION['join'] = $_POST ;
+          $_SESSION['join']['image']= '' ;
+        }
         header('Location: check.php');
         exit();
       }
@@ -54,12 +73,23 @@
         if (!empty($_REQUEST['action'])) {
             if ($_REQUEST['action'] == 'rewrite') {
               $_POST = $_SESSION['join'];
-              $ext = substr($_SESSION['join']['image'], -3);
-              if ($ext == 'jpg' || $ext == 'gif') {
-                  $fileName = 'rewrite';
+              if (!empty($_SESSION['join']['image'])) {
+                $ext = substr($_SESSION['join']['image'], -3);
+                if ($ext == 'jpg' || $ext == 'gif') {
+                    $fileName = 'rewrite';
+                }
               }
             }
         }
+    }
+
+    // ユーザー情報の取得（入力欄内表示用）
+    if (empty($_POST)) {
+      $sql = sprintf('SELECT * FROM members WHERE id=%d',
+        mysqli_real_escape_string($db, $_SESSION['id'])
+        );
+      $members = mysqli_query($db, $sql) or die(mysqli_error($db));
+      $_POST = mysqli_fetch_assoc($members);
     }
 ?>
 
@@ -67,7 +97,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>会員登録</title>
+  <title>アカウント編集画面</title>
 </head>
 <body>
   <p>次のフォームに変更後の情報をご記入ください。</p>
@@ -102,29 +132,38 @@
               <p class="error">* メールアドレスを入力してください</p>
               <?php endif ; ?>
               <?php if ($error['email'] == 'duplicate'): ?>
-                <p class="error">* 指定されたメールアドレスはすでに登録されています</p>
+                <p class="error">* 指定されたメールアドレスはすでに他のアカウントで登録されています</p>
               <?php endif ?>
             <?php endif ; ?>
           </dd>
-          <dt>パスワード<span class="required">必須</span></dt>
+          <dt>現在のパスワード<span class="required">※必須</span></dt>
           <dd>
-            <?php if (isset($_POST["password"])){
-                    echo sprintf('<input type="password" name="password" size="10" maxlength="20" value="%s" >' ,
-                    htmlspecialchars($_POST["password"], ENT_QUOTES, "UTF-8" ));
-                } else {
-                    echo '<input type="password" name="password" size="10" maxlength="20">' ;
-                }
-            ?>
-            <?php if (isset($error['password'])): ?>
-              <?php if ($error['password'] == 'blank') : ?>
+            <input type="password" name="current_password" size="10" maxlength="20">
+            <?php if (isset($error['current_password'])): ?>
+              <?php if ($error['current_password'] == 'blank') : ?>
               <p class="error">* パスワードを入力してください</p>
               <?php endif ; ?>
-              <?php if ($error['password'] == 'length') : ?>
+              <?php if ($error['current_password'] == 'length') : ?>
               <p class="error">* パスワードは4文字以上で入力してください</p>
+              <?php endif ; ?>
+              <?php if ($error['current_password'] == 'wrong'): ?>
+                <p class="error">* パスワードが誤っています。正しいパスワードを入力してください</p>
               <?php endif ; ?>
             <?php endif ; ?>
           </dd>
-          <dt>写真など</dt>
+          <dt>変更後のパスワード<span class="required">任意</span></dt>
+          <dd>
+           <input type="password" name="modified_password" size="10" maxlength="20">
+            <?php if (isset($error['modified_password'])): ?>
+              <?php if ($error['modified_password'] == 'blank') : ?>
+              <p class="error">* パスワードを入力してください</p>
+              <?php endif ; ?>
+              <?php if ($error['modified_password'] == 'length') : ?>
+              <p class="error">* 変更後のパスワードは4文字以上で入力してください</p>
+              <?php endif ; ?>
+            <?php endif ; ?>
+          </dd>
+          <dt>写真など<span class="required">任意</span></dt>
           <dd>
             <input type="file" name="image" size="35">
             <?php if (isset($error['image'])): ?>
