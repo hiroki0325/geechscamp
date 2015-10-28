@@ -7,6 +7,14 @@
     return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
   }
 
+  mb_regex_encoding( "UTF-8" );
+  function makeLink($value){
+    //return mb_ereg_replace("(https?)(://[[:alnum:]\+\$\;\?\.%,!#~*:@&+_-]+)", '<a href="\1\2">\1\2</a>', $value);
+    return mb_ereg_replace('ひな','店長',$value);
+  }
+
+  echo makeLink("ひなは毎朝シャワーを浴び、お肌の調子を整えて「ひな、頑張る！」と言ってから学校にきます。");
+
   if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 >time() ) {
     // ログインしている
     $_SESSION['time'] = time();
@@ -41,11 +49,16 @@
 
   // 投稿を取得する
   //// URLに?page=2などのページ番号があれば、それを取得して$pageに代入
-  $page = $_REQUEST['page'];
-  if ($page == '') {
-    ////// URLに?pageがなければ1ページ目とみなし$pageに1を代入します
+  if (isset($_REQUEST['page'])) {
+    $page = $_REQUEST['page'];
+  } else {
     $page = 1;
   }
+
+  //// もしURLに?pageがなければ、1ページ目とみなします
+if ($page =='' ) {
+  $page =1;
+}
 
   //// max関数
   //// ()内に指定した複数データから一番大きい値を取得する
@@ -135,7 +148,7 @@
     <div class="msg">
       <img src="member_picture/<?php echo h($post['picture']); ?>" width="48" height="48">
       <p>
-        <?php echo h($post['message']); ?><span class="name">(<?php echo h($post['nickname']); ?>)</span>
+        <?php echo makeLink(h($post['message'])); ?><span class="name">(<?php echo h($post['nickname']); ?>)</span>
         [<a href="index.php?res=<?php echo h($post['id']); ?>">Re</a>]
 
       </p>
@@ -151,5 +164,20 @@
       </p>
     </div>
   <?php endwhile; ?>
+
+  <!-- ページング用のボタン設置 -->
+  <ul class="paging">
+    <?php if ($page > 1) { ?>
+      <li><a href="index.php?page=<?php print ($page - 1); ?>">前のページ</a></li>
+      <?php } else { ?>
+      <li>前のページ</li>
+    <?php } ?>
+
+    <?php if ($page < $maxPage) { ?>
+      <li><a href="index.php?page=<?php print ($page + 1); ?>">次のページ</a></li>
+    <?php } else {  ?>
+    <li>次のページ</li>
+    <?php } ?>
+  </ul>
 </body>
 </html>

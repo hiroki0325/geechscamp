@@ -25,3 +25,12 @@
   font-size: 80%;
   color: #999;
 }
+
+/* ページング */
+ul {
+  list-style: none;
+}
+
+li{
+  display: inline-block;
+}

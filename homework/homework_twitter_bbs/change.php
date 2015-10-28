@@ -66,8 +66,8 @@
           $_SESSION['join'] = $_POST ;
           $_SESSION['join']['image']= '' ;
         }
-        // header('Location: check.php');
-        // exit();
+        header('Location: check.php');
+        exit();
       }
     }
 

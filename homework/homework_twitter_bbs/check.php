@@ -13,31 +13,24 @@
       exit();
     }
 
+    // 現在の登録情報を取得
+    $sql = sprintf('SELECT * FROM members WHERE id=%d',
+      mysqli_real_escape_string($db, $_SESSION['id'])
+      );
+    $members = mysqli_query($db, $sql) or die(mysqli_error($db));
+    $member = mysqli_fetch_assoc($members);
+
     if (!empty($_POST)) {
       // 登録処理をする
       // ToDoここの書き方がくっそいけてない気がする
       // ⇒上にif文を作り、そこで変更していない場合は今の値を入れるようにしてあげると良い。
-      if ( $_SESSION['join']['modified_password'] == '' && $_SESSION['join']['image'] == '') {
-        $sql = sprintf('UPDATE members SET name="%s", email="%s", modified=NOW() WHERE id=%d',
-                    mysqli_real_escape_string($db, $_SESSION['join']['name']),
-                    mysqli_real_escape_string($db, $_SESSION['join']['email']),
-                    mysqli_real_escape_string($db, $_SESSION['id'])
-                    );
-      } elseif ($_SESSION['join']['image'] == '') {
-        $sql = sprintf('UPDATE members SET name="%s", email="%s", password="%s", modified=NOW() WHERE id=%d',
-            mysqli_real_escape_string($db, $_SESSION['join']['name']),
-            mysqli_real_escape_string($db, $_SESSION['join']['email']),
-            mysqli_real_escape_string($db, sha1($_SESSION['join']['modified_password'])),
-            mysqli_real_escape_string($db, $_SESSION['id'])
-            );
-      } elseif ($_SESSION['join']['modified_password'] == '') {
-        $sql = sprintf('UPDATE members SET name="%s", email="%s", picture="%s", modified=NOW() WHERE id=%d',
-              mysqli_real_escape_string($db, $_SESSION['join']['name']),
-              mysqli_real_escape_string($db, $_SESSION['join']['email']),
-              mysqli_real_escape_string($db, $_SESSION['join']['image']),
-              mysqli_real_escape_string($db, $_SESSION['id'])
-              );
-      } else {
+      if ($_SESSION['join']['modified_password'] == '' ) {
+        $_SESSION['join']['modified_password'] = $member['password'];
+      }
+      if ($_SESSION['join']['image'] == '' ) {
+        $_SESSION['join']['image'] = $member['picture'];
+      }
+
       $sql = sprintf('UPDATE members SET name="%s", email="%s", password="%s", picture="%s", modified=NOW() WHERE id=%d',
             mysqli_real_escape_string($db, $_SESSION['join']['name']),
             mysqli_real_escape_string($db, $_SESSION['join']['email']),
@@ -45,7 +38,7 @@
             mysqli_real_escape_string($db, $_SESSION['join']['image']),
             mysqli_real_escape_string($db, $_SESSION['id'])
             );
-      }
+
       mysqli_query($db, $sql) or die(mysqli_error($db));
       unset($_SESSION['join']);
 
