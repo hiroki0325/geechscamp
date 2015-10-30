@@ -3,6 +3,26 @@
   require('dbconnect.php');
   require('functionh.php');
 
+  // 詳細内のURLにリンクを設定する
+  function makeLink($value){
+    return mb_ereg_replace("(https?)(://[[:alnum:]\+\$\;\?\.%,!#~*/:@&=_-]+)",'<a href="\1\2">\1\2</a>', $value);
+  }
+
+  // カテゴリが選択されていたら、カテゴリ情報をセッションに保存
+  if (isset($_REQUEST['category'])) {
+    $_SESSION['category_id'] = $_REQUEST['category'];
+    $sql = sprintf('SELECT name FROM categories WHERE id=%d',
+        mysqli_real_escape_string($db, $_REQUEST['category'])
+      );
+     $category = mysqli_query($db, $sql) or die(mysqli_error($db));
+     $_SESSION['category_name'] = mysqli_fetch_assoc($category);
+  }else{
+    // カテゴリが選択されていなかったら、セッション情報をクリア
+    $_SESSION['category_id'] = NULL;
+    $_SESSION['category_name'] = NULL;
+    $_SESSION['category'] = NULL;
+  }
+
   if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
     # ログインしている
     $_SESSION['time'] = time();
@@ -18,25 +38,31 @@
     exit();
   }
 
-  // タスクを記録する
-  if (isset($_POST['task_title'])) {
-    $sql = sprintf('INSERT INTO tasks SET user_id=%d, title="%s", created=NOW()',
-      mysqli_real_escape_string($db, $_SESSION['id']),
-      mysqli_real_escape_string($db, $_POST['task_title'])
+  //未完了タスクを取得する
+  if (!isset($_SESSION['category_id'])) {
+    $sql = sprintf('SELECT * FROM tasks WHERE user_id=%d AND finish_flg=0 ORDER BY created DESC',
+      mysqli_real_escape_string($db, $_SESSION['id'])
       );
-    mysqli_query($db, $sql) or die(mysqli_error($db));
+  }else{
+    $sql = sprintf('SELECT * FROM tasks WHERE user_id=%d AND category_id=%d AND finish_flg=0 ORDER BY created DESC',
+      mysqli_real_escape_string($db, $_SESSION['id']),
+      mysqli_real_escape_string($db, $_SESSION['category_id'])
+      );
   }
 
-  //未完了タスクを取得する
-  $sql = sprintf('SELECT * FROM tasks WHERE user_id=%d AND finish_flg=0 ORDER BY created DESC',
-    mysqli_real_escape_string($db, $_SESSION['id'])
-    );
   $tasks = mysqli_query($db, $sql) or die(mysqli_error($db));
 
   // 完了タスクを取得する
-  $sql = sprintf('SELECT * FROM tasks WHERE user_id=%d AND finish_flg=1 ORDER BY modified DESC',
-    mysqli_real_escape_string($db, $_SESSION['id'])
-    );
+  if (!isset($_SESSION['category_id'])) {
+    $sql = sprintf('SELECT * FROM tasks WHERE user_id=%d AND finish_flg=1 ORDER BY created DESC',
+      mysqli_real_escape_string($db, $_SESSION['id'])
+      );
+  }else{
+    $sql = sprintf('SELECT * FROM tasks WHERE user_id=%d AND category_id=%d AND finish_flg=1 ORDER BY created DESC',
+      mysqli_real_escape_string($db, $_SESSION['id']),
+      mysqli_real_escape_string($db, $_SESSION['category_id'])
+      );
+  }
   $finishedTasks = mysqli_query($db, $sql) or die(mysqli_error($db));
 
   // カテゴリを記録する
@@ -53,11 +79,6 @@
     mysqli_real_escape_string($db, $_SESSION['id'])
     );
   $categories = mysqli_query($db, $sql) or die(mysqli_error($db));
-
-  // 詳細内のURLにリンクを設定する
-  function makeLink($value){
-    return mb_ereg_replace("(https?)(://[[:alnum:]\+\$\;\?\.%,!#~*/:@&=_-]+)",'<a href="\1\2">\1\2</a>', $value);
-  }
 
 ?>
 
@@ -84,8 +105,8 @@
       </div>
         <div class="col-sm-9">
           <div class="col-sm-10">
-            <p><?php if (isset($_REQUEST['category'])): ?>
-              <?php echo $_REQUEST['category'] ?>
+            <p><?php if (isset($_SESSION['category_name'])): ?>
+              <?php echo $_SESSION['category_name']['name']; ?>
             <?php else: ?>
               タスク一覧
             <?php endif ?></p>
@@ -100,22 +121,42 @@
         こんにちは、<?php echo $member['name']; ?>さん
       </div>
       <div class="col-xs-9">
-        <!-- ToDoを追加する -->
-        <form action="" method="POST" accept-charset="utf-8">
-          <input type="text" name="task_title" placeholder="新しいToDoを入力"><br>
+        <!-- タスクを追加する -->
+        <form action="makeTasks.php" method="POST" accept-charset="utf-8">
+          <input type="text" name="task_title" placeholder="新しいToDoを入力">
+          <select name="category_id">
+            <option value="">カテゴリを選択してください</option>
+            <?php while ($category = mysqli_fetch_assoc($categories)) { ?>
+              <option value="<?php echo $category['id'] ?>"><?php echo $category['name'] ?></option>
+            <?php } ?>
+          </select>
+          <br>
           <input type="submit" value="ToDoを追加する">
         </form>
       </div>
     </div>
     <div class="row">
       <div class="col-xs-3">
-        <!-- カテゴリ一覧 -->
-        <a href="index.php">タスク一覧</a><br>
-        <?php while ($category = mysqli_fetch_assoc($categories)) { ?>
-        <a href="index.php?category=<?php echo $category['name']; ?>"><?php  echo $category['name']; ?></a><br>
+          <!-- カテゴリ一覧 -->
+          <a href="index.php">タスク一覧</a><br>
+          <?php mysqli_data_seek($categories, 0); ?>
+          <?php while ($category = mysqli_fetch_assoc($categories)) { ?>
+          <a href="index.php?category=<?php echo $category['id']; ?>"><?php  echo $category['name']; ?></a>
+          <span style="float: right"><a href="index.php?action=edit&id=<?php echo $category['id']; ?>&category=<?php echo $category['id']; ?>">編集</a>｜<a href="category/delete.php?id=<?php echo $category['id']; ?>">削除</a></span><br>
+          <?php if (isset($_REQUEST['action']) && isset($_REQUEST['id'] )): ?>
+            <?php if ($_REQUEST['action']=='edit' && $_REQUEST['id'] == $category['id']): ?>
+              <form action="category/update.php" method="post">
+                <input type="text" name="edited_categoryname" placeholder="カテゴリ名">
+                <?php  if (isset($_SESSION['category_id'])) { ?>
+                  <input type="hidden" name="category_id" value="<?php echo $_SESSION['category_id']; ?>">
+                <?php }?>
+                <input type="submit" value="変更">
+              </form>
+            <?php endif; ?>
+          <?php endif ?>
         <?php } ?>
         <!-- 新しいカテゴリを作成する -->
-        <form action="" method="POST" accept-charset="utf-8">
+        <form action="" method="post" accept-charset="utf-8">
           <input type="text" name="category_name" placeholder="新しいカテゴリ名"><br>
           <input type="submit" value="新しいカテゴリを作成する">
         </form>
@@ -129,9 +170,12 @@
           <?php } ?>
           <?php while ($finishedTask = mysqli_fetch_assoc($finishedTasks)) { ?>
           <form action="finish.php" method="post" accept-charset="utf-8">
-            <input type="checkbox" name="<?php echo $finishedTask['id'] ?>" value="finish" checked="checked">
+            <input type="checkbox" name="<?php echo $finishedTask['id']; ?>" value="finish" checked="checked">
             <span style="color:#A9A9A9"><?php  echo $finishedTask['title']; ?></span><br>
             <?php } ?>
+            <?php  if (isset($_SESSION['category_id'])) { ?>
+              <input type="hidden" name="category_id" value="<?php echo $_SESSION['category_id']; ?>">
+            <?php }?>
         <input type="submit" value="チェックしたタスクを完了にする">
         </form>
       </div>
