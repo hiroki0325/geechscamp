@@ -2,8 +2,8 @@
   session_start();
   require('../dbconnect.php');
 
-  if (isset($_SESSION['id'])) {
-    $id = $_REQUEST['id'];
+  if (isset($_REQUEST['category_id'])) {
+    $id = $_REQUEST['category_id'];
 
     // カテゴリーを検査する
     $sql = sprintf('SELECT * FROM categories WHERE id=%d',

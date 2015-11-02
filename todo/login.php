@@ -4,9 +4,9 @@
     require('dbconnect.php');
     require('functionh.php');
 
-    if (isset($_COOKIE['email'])) {
-        if ($_COOKIE['email'] != '') {
-          $_POST['email'] = $_COOKIE['email'];
+    if (isset($_COOKIE['mail'])) {
+        if ($_COOKIE['mail'] != '') {
+          $_POST['mail'] = $_COOKIE['mail'];
           $_POST['password'] = $_COOKIE['password'];
           $_POST['save'] = 'on';
         }

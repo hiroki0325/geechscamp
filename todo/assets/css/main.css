@@ -1,15 +1,36 @@
-.orange{
-  background-color: orange;
+.error {
+  color:red;
+  border:2px solid red;
 }
 
-.red{
-  background-color: red;
+/* タスク部分のデザイン */
+/*.todo{
+  clear: both;
+  border-top: 1px solid #ccc;
+  padding:1px 0;
 }
 
-.blue{
-  background-color: blue;
+.todo p{
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
-.green{
-  background-color: green;
+.finished{
+  background-color:#D8D8D8 ;
 }
+
+.todo .day,
+.todo .day a {
+  font-size: 80%;
+  color: #999;
+}
+
+/* ページング */
+ul {
+  list-style: none;
+}
+
+li{
+  display: inline-block;
+}
+*/
