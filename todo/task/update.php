@@ -31,6 +31,7 @@
       if ($_POST['deadline'] =='') {
         $_POST['deadline'] ="NULL";
       }else{
+        $_POST['deadline'] = mysqli_real_escape_string($db, $_POST['deadline']);
         $_POST['deadline'] ='"'.$_POST['deadline'].'"';
       }
 

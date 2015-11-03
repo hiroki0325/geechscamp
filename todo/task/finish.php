@@ -46,7 +46,7 @@
   }
   if (isset($_POST['category_id'])) {
     $param = $_POST['category_id'];
-    header("Location: ../index.php?category={$param}");
+    header("Location: ../index.php?category_id={$param}");
     exit();
   } else {
     header('Location: ../index.php');
