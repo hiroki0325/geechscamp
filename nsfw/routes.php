@@ -1,5 +1,31 @@
 <?php
 
+    // ネコ型ロボットクラスを呼び出してオブジェクトを作成
+    include('robot.php');
+
+    // $aというロボット(インスタンス)を設計図Robot(クラス)から生成
+    $a = new Robot('ドラえもん');
+    // $bというロボット(インスタンス)を設計図Robot(クラス)から生成
+    $b = new Robot('ドラミちゃん');
+
+    // -> アロー演算子
+    // インスタンス(オブジェクト)のプロパティを参照するための演算子
+    // nameプロパティに文字を代入
+    // $a->name = 'ドラえもん';
+    // $b->name = 'ドラミちゃん';
+
+
+    // nameプロパティを呼び出して表示
+    // echo $a->name;
+    // echo $b->name;
+
+    // カプセル化したプロパティを扱う
+    // $a->setName('ドラえもん');
+    // $b->setName('ドラミちゃん');
+
+    echo $a->getName();
+    echo $b->getName();
+
     // $singular = "category";
     // echo $singular;
     // echo "<br>";

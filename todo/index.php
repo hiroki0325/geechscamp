@@ -84,6 +84,7 @@
   <link rel="stylesheet" href="assets/css/bootstrap.css">
   <link rel="stylesheet" href="assets/font-awesome/css/font-awesome.css">
   <link rel="stylesheet" href="assets/css/main.css">
+  <link rel="stylesheet" href="assets/css/sideMenu.css">
   <!-- JavaScript -->
   <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
 
@@ -150,30 +151,51 @@
       <div class="col-xs-3">
 
         <!-- 受信箱 -->
-        <a href="index.php">タスク一覧</a><br>
+        <div class="panel-group" id="accordion">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h4 class="panel-title">
+                <a href="index.php">
+                  <i class="fa fa-folder-open-o"></i>タスク一覧
+                </a><br>
+              </h4>
+            </div>
 
-        <!-- カテゴリ一覧を表示 -->
-        <?php mysqli_data_seek($categories, 0); ?>
-        <?php while ($category = mysqli_fetch_assoc($categories)) { ?>
-          <a href="index.php?category_id=<?php echo $category['id']; ?>">
-            <?php  echo $category['name']; ?>
-          </a>
-          <span style="float: right">
-            <a href="index.php?action=edit&category_id=<?php echo $category['id']; ?>"><i class="fa fa-pencil-square-o"></i></a>｜<a href="category/delete.php?category_id=<?php echo $category['id']; ?>"><i class="fa fa-ban"></i></a>
-          </span>
-          <br>
-          <?php if (isset($_REQUEST['action']) && isset($_REQUEST['category_id'] )): ?>
-            <?php if ($_REQUEST['action']=='edit' && $_REQUEST['category_id'] == $category['id']): ?>
-              <form action="category/update.php" method="post">
-                <input type="text" name="edited_categoryname" placeholder="カテゴリ名">
-                  <?php  if (isset($_SESSION['category_id'])) { ?>
-                    <input type="hidden" name="category_id" value="<?php echo $_SESSION['category_id']; ?>">
-                  <?php }?>
-                <input type="submit" value="変更">
-              </form>
-            <?php endif; ?>
-          <?php endif; ?>
-        <?php } ?>
+            <!-- カテゴリ一覧を表示 -->
+            <?php mysqli_data_seek($categories, 0); ?>
+            <div id="collapseOne" class="panel-collapse collapse in">
+              <div class="panel-body">
+                <table class="table">
+                  <?php while ($category = mysqli_fetch_assoc($categories)) { ?>
+                    <tr>
+                      <td>
+                        <a href="index.php?category_id=<?php echo $category['id']; ?>">
+                          <i class="fa fa-file-text-o"></i>
+                          <?php  echo $category['name']; ?>
+                        </a>
+                        <span style="float: right">
+                          <a href="index.php?action=edit&category_id=<?php echo $category['id']; ?>"><i class="fa fa-pencil-square-o"></i></a> <a href="category/delete.php?category_id=<?php echo $category['id']; ?>"><i class="fa fa-ban"></i></a>
+                        </span>
+                        <br>
+                        <?php if (isset($_REQUEST['action']) && isset($_REQUEST['category_id'] )): ?>
+                          <?php if ($_REQUEST['action']=='edit' && $_REQUEST['category_id'] == $category['id']): ?>
+                            <form action="category/update.php" method="post">
+                              <input type="text" name="edited_categoryname" placeholder="カテゴリ名">
+                              <?php  if (isset($_SESSION['category_id'])) { ?>
+                              <input type="hidden" name="category_id" value="<?php echo $_SESSION['category_id']; ?>">
+                              <?php }?>
+                              <input type="submit" value="変更">
+                            </form>
+                          <?php endif; ?>
+                        <?php endif; ?>
+                      </td>
+                    </tr>
+                  <?php } ?>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
 
         <!-- 新しいカテゴリを作成する -->
         <form action="category/create.php" method="post" accept-charset="utf-8">
@@ -195,11 +217,9 @@
                 <div class="checkbox" style="border-bottom:1px solid #ddd;">
                   <li class="ui-state-default">
                     <input type="checkbox" name="<?php echo $task['id'] ?>" value="finish">
-                    <span><?php  echo $task['title']; ?></span>
+                    <span><?php  echo $task['title']; ?><i class="fa fa-exclamation-triangle"></i></span>
                   </li>
-                  <span style="float: right"><a href="task/update.php?task_id=<?php echo $task['id']; ?>"><i class="fa fa-pencil-square-o"></i></a>｜<a href="task/delete.php?task_id=<?php echo $task['id']; ?>">
-                    <!-- ToDo ボタンにすると押しても画面遷移しない。。。 -->
-                    <!-- <button class="remove-item btn btn-default btn-xs pull-right"><span class="glyphicon glyphicon-remove"></span></button> -->
+                  <span style="float: right"><a href="task/update.php?task_id=<?php echo $task['id']; ?>"><i class="fa fa-pencil-square-o"></i></a> <a href="task/delete.php?task_id=<?php echo $task['id']; ?>">
                     <i class="fa fa-ban"></i></a>
                   </span>
                 </div>
@@ -214,14 +234,10 @@
                 <div class="checkbox" style="border-bottom:1px solid #ddd;" >
                   <li>
                     <input type="checkbox" name="<?php echo $finishedTask['id']; ?>" value="finish" checked="checked">
-                    <span style="color:#A9A9A9"><?php  echo $finishedTask['title']; ?></span>
+                    <span style="color:#A9A9A9"><?php  echo $finishedTask['title']; ?><i class="fa fa-exclamation-triangle"></i></span>
                   </li>
                   <span style="float: right">
-                    <a href="task/update.php?task_id=<?php echo $finishedTask['id']; ?>"><i class="fa fa-pencil-square-o"></i></a>｜<a href="task/delete.php?task_id=<?php echo $finishedTask['id']; ?>">
-                    <!-- <button class="remove-item btn btn-default btn-xs pull-right">
-                    <span class="glyphicon glyphicon-remove">
-                    </span>
-                    </button> -->
+                    <a href="task/update.php?task_id=<?php echo $finishedTask['id']; ?>"><i class="fa fa-pencil-square-o"></i></a> <a href="task/delete.php?task_id=<?php echo $finishedTask['id']; ?>">
                     <i class="fa fa-ban"></i>
                    </a>
                  </span>
