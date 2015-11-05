@@ -3,9 +3,6 @@
     $BlogsController = new BlogsController($db, $plural_resorce ,$option);
     $blogs = $BlogsController->index();
 
-    echo "hallo world index view <br>";
-    echo "<br>";
-
     while ($blog = mysqli_fetch_assoc($blogs)) {
       $id = $blog['id'];
       $title = $blog['title'];
@@ -17,7 +14,8 @@
       echo "<br>";
       echo $created;
       echo "<br>";
-      echo '<a href="show/' . $id .'">詳細を見る</a>｜';
+      echo '<a href="show/' . $id .'">詳細</a>｜';
+      echo '<a href="edit/' . $id .'">編集</a>｜';
       echo '<a href="delete/' . $id .'">削除</a>';
       echo "<br>";
     }

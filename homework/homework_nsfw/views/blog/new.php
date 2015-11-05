@@ -4,9 +4,6 @@
     $BlogsController = new BlogsController($db, $plural_resorce, $option);
     $blogs = $BlogsController->_new();
 
-    echo "hallo world new view <br>";
-    echo "<br>";
-
 ?>
 
 <form action="" method="post" accept-charset="utf-8">

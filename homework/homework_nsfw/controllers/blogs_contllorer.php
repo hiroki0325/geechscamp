@@ -57,6 +57,17 @@
                   }
             }
         }
+
+        public function edit($blog,$id){
+            if (!empty($blog)) {
+                $Blog = new Blog($this->plural_resorce, $this->option, $this->db);
+                $sql = $Blog->update($blog,$id);
+                mysqli_query($this->db, $sql) or die(mysqli_error($this->db));
+                header('Location:../index');
+                exit();
+            }
+        }
+
         public function delete(){
             $Blog = new Blog($this->plural_resorce, $this->option, $this->db);
             $sql = $Blog->delete();

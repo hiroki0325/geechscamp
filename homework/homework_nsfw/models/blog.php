@@ -35,6 +35,16 @@
             return $sql;
         }
 
+        public function update($blog,$id){
+            $sql = sprintf('UPDATE %s SET title="%s", body="%s", modified=NOW() WHERE id=%d',
+                    $this->plural_resorce,
+                    mysqli_real_escape_string($this->db, $blog['title']),
+                    mysqli_real_escape_string($this->db, $blog['body']),
+                    $id
+                );
+            return $sql;
+        }
+
         public function delete(){
             $sql = sprintf('DELETE FROM '. $this->plural_resorce .' WHERE id=%d',
                 mysqli_real_escape_string($this->db, $this->option)

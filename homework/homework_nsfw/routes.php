@@ -64,6 +64,9 @@
     // controller呼び出す
     include('./controllers/' . $plural_resorce . '_contllorer.php');
 
+    // ヘルパーを呼び出す
+    include('./views/helpers/application_helper.php');
+
     // レイアウトファイルを読み込み
     include('./views/layouts/application.php');
     // ./ ← 現在いるディレクトリ

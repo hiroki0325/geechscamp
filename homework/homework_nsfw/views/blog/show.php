@@ -3,9 +3,6 @@
     $BlogsController = new BlogsController($db, $plural_resorce, $option);
     $blogs = $BlogsController->show();
 
-    echo "hallo world show view <br>";
-    echo "<br>";
-
     while ($blog = mysqli_fetch_assoc($blogs)) {
       $title = $blog['title'];
       $body = $blog['body'];
