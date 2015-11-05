@@ -49,8 +49,10 @@
     $resource = $params[0];
     $action = $params[1];
 
-    if (count($params) > 2) {
-        $id = $params[2];
+    if (isset($params[2])) {
+        $option = $params[2];
+    }else{
+        $option = 1;
     }
 
     // リソース名を複数形に変換する処理
@@ -62,12 +64,10 @@
     // controller呼び出す
     include('./controllers/' . $plural_resorce . '_contllorer.php');
 
-    // viewの形成を楽にするヘルパーを読み込み
-    include('./views/helpers/application_helper.php');
-
     // レイアウトファイルを読み込み
     include('./views/layouts/application.php');
     // ./ ← 現在いるディレクトリ
+
 
 ?>
 

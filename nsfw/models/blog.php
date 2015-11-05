@@ -16,5 +16,23 @@
             $sql = 'SELECT * FROM ' . $this->plural_resorce;
             return $sql;
         }
+
+        public function findById($id) {
+            $sql = sprintf('SELECT * FROM %s WHERE id=%s',
+                $this->plural_resorce,
+                $id
+                );
+            return $sql;
+        }
+
+        public function create($blog){
+            $sql = sprintf('INSERT INTO %s SET title="%s", body="%s", created=NOW()',
+                $this->plural_resorce,
+                $blog['title'],
+                $blog['body']
+                );
+
+            return $sql;
+        }
     }
 ?>
