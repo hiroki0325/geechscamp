@@ -45,6 +45,37 @@
                 header('Location:index');
             }
         }
+
+        public function edit($blog, $id){
+
+            if (empty($blog)) {
+                // ページに初めて訪れた際
+                $blog_record = $this->show($id);
+                $blog = mysqli_fetch_assoc($blog_record);
+
+                return $blog;
+
+            } elseif(!empty($blog)) {
+                // 情報を編集し送信した際
+                $id = array('id' => $id);
+                $blog = array_merge($id, $blog);
+
+                $Blog  = new Blog($this->plural_resorce);
+                $sql = $Blog->update($blog);
+
+                mysqli_query($this->db, $sql) or die(mysqli_error($this->db));
+                header('Location: ../index');
+            }
+        }
+
+        public function delete($id){
+            $Blog  = new Blog($this->plural_resorce);
+            $sql = $Blog->destroy($id);
+
+            mysqli_query($this->db, $sql) or die(mysqli_error($this->db));
+
+            header('Location: ../index');
+        }
     }
 
 ?>

@@ -62,6 +62,12 @@
     // controller呼び出す
     include('./controllers/' . $plural_resorce . '_contllorer.php');
 
+    // リソース名がdeleteなら削除処理する
+    if ($action == 'delete') {
+        $BlogsController = new BlogsController($db, $plural_resorce);
+        $BlogsController->delete($id);
+    }
+
     // viewの形成を楽にするヘルパーを読み込み
     include('./views/helpers/application_helper.php');
 

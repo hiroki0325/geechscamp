@@ -34,5 +34,24 @@
 
             return $sql;
         }
+
+        public function update($blog){
+            $sql = sprintf('UPDATE %s SET title="%s", body="%s", modified=NOW() WHERE id=%s',
+                $this->plural_resorce,
+                $blog['title'],
+                $blog['body'],
+                $blog['id']
+            );
+            return $sql;
+        }
+
+        public function destroy($id){
+            $sql = sprintf('DELETE FROM %s WHERE id=%s',
+                $this->plural_resorce,
+                $id
+                );
+
+            return $sql;
+        }
     }
 ?>
