@@ -44,6 +44,7 @@
     // 第一引数に指定した文字列で第二引数に指定した文字列を分割し、
     // 配列として返す
     $params = explode('/', $_GET['url']);
+    var_dump($_GET['url']);
     // var_dump($params);
 
     $resource = $params[0];

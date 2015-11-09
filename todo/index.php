@@ -191,17 +191,27 @@
                       </td>
                     </tr>
                   <?php } ?>
+
+                  <!-- 新しいカテゴリを作成 -->
+                  </form>
                 </table>
               </div>
+            </div>
+            <div class="panel-heading">
+              <h4 class="panel-title">
+                <!-- 新しいカテゴリを作成する -->
+                <form action="category/create.php" method="post" accept-charset="utf-8">
+                  <input type="text" name="category_name" style="width:180px;" placeholder="新しいカテゴリ名">
+                  <span style="float: right">
+                    <input type="submit" value="作成"  >
+                  </span>
+                </form>
+              </h4>
             </div>
           </div>
         </div>
 
-        <!-- 新しいカテゴリを作成する -->
-        <form action="category/create.php" method="post" accept-charset="utf-8">
-          <input type="text" name="category_name" placeholder="新しいカテゴリ名"><br>
-          <input type="submit" value="新しいカテゴリを作成する">
-        </form>
+
 
       </div>
 
