@@ -94,57 +94,42 @@
 
     <!-- 1行目 -->
     <div class="row">
-      <div class="col-sm-3">
-        <div class="col-sm-2">
-          <p>≡</p>
-        </div>
-        <div class="col-sm-10">
-          <p>検索窓(予定地)</p>
-        </div>
+
+      <!-- カテゴリパート -->
+      <div class="col-sm-3" style="text-align: center;">
+        こんにちは、<?php echo $member['name']; ?>さん
       </div>
+
+      <!-- タスクパート -->
       <div class="col-sm-9">
         <div class="col-sm-10">
-          <p>
+          <span style="margin: 0px 0px 0px -2px;">
             <?php if (isset($_SESSION['category_name'])): ?>
               <?php echo $_SESSION['category_name']; ?>
             <?php else: ?>
               タスク一覧
-            <?php endif ?>
-          </p>
+            <?php endif; ?>
+          </span>
+          <div class="input-group" style="float: right;">
+            <form action="" method="get">
+              <input type="text" class="form-control" name="search" placeholder="タスクを検索" style="width:160px; height:27px;" >
+              <span class="input-group-btn">
+                <button class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>
+              </span>
+            </form>
+          </div>
         </div>
         <div class="col-sm-2">
-          <p>設定</p>
+          <p>
+            <i class="fa fa-sort-alpha-asc" style="font-size: 20px;"></i>
+            <i class="fa fa-cog" style="font-size: 20px;"></i>
+          </p>
         </div>
       </div>
+
     </div>
 
     <!-- 2行目 -->
-    <div class="row">
-      <div class="col-xs-3">
-        こんにちは、<?php echo $member['name']; ?>さん
-      </div>
-      <div class="col-xs-9">
-        <form action="task/create.php" method="POST" accept-charset="utf-8">
-          <div class="col-md-7">
-            <!-- タスクを追加する -->
-            <input type="text" name="task_title" placeholder="新しいToDoを入力" class="form-control add-todo">
-          </div>
-          <div class="col-md-3">
-            <select name="category_id" style="height: 25px; font-size: 30px; margin-top: 2px; ">
-              <option value="">カテゴリを選択してください</option>
-              <?php while ($category = mysqli_fetch_assoc($categories)) { ?>
-                <option value="<?php echo $category['id'] ?>"><?php echo $category['name'] ?></option>
-              <?php } ?>
-            </select>
-          </div>
-          <div class="col-md-2">
-            <button type="submit" class="btn btn-success">ToDoを追加する</button>
-          </div>
-        </form>
-      </div>
-    </div>
-
-    <!-- メイン部分（カテゴリ/タスク） -->
     <div class="row">
 
       <!-- カテゴリセクション -->
@@ -162,7 +147,6 @@
             </div>
 
             <!-- カテゴリ一覧を表示 -->
-            <?php mysqli_data_seek($categories, 0); ?>
             <div id="collapseOne" class="panel-collapse collapse in">
               <div class="panel-body">
                 <table class="table">
@@ -173,6 +157,12 @@
                           <i class="fa fa-file-text-o"></i>
                           <?php  echo $category['name']; ?>
                         </a>
+                        <?php $task = cnt($db, $category);?>
+                        <?php if($task['cnt'] != 0){ ?>
+                          <span class="badge">
+                            <?php echo $task['cnt']; ?>
+                          </span>
+                        <?php } ?>
                         <span style="float: right">
                           <a href="index.php?action=edit&category_id=<?php echo $category['id']; ?>"><i class="fa fa-pencil-square-o"></i></a> <a href="category/delete.php?category_id=<?php echo $category['id']; ?>"><i class="fa fa-ban"></i></a>
                         </span>
@@ -191,15 +181,14 @@
                       </td>
                     </tr>
                   <?php } ?>
-
-                  <!-- 新しいカテゴリを作成 -->
                   </form>
                 </table>
               </div>
             </div>
+
+            <!-- 新しいカテゴリを作成する -->
             <div class="panel-heading">
               <h4 class="panel-title">
-                <!-- 新しいカテゴリを作成する -->
                 <form action="category/create.php" method="post" accept-charset="utf-8">
                   <input type="text" name="category_name" style="width:180px;" placeholder="新しいカテゴリ名">
                   <span style="float: right">
@@ -210,9 +199,29 @@
             </div>
           </div>
         </div>
+      </div>
 
-
-
+      <!-- タスクを追加する -->
+      <div class="col-xs-9">
+        <form action="task/create.php" method="POST" accept-charset="utf-8">
+          <div class="col-sm-10">
+            <span style="float: left;">
+              <input type="text" name="task_title" placeholder="新しいToDoを入力" class="form-control add-todo" style="margin: 0px 0px 0px -15px; width: 445px;">
+            </span>
+            <span style="float: right;">
+              <select name="category_id" style="height: 25px; font-size: 30px; margin-top: 2px; ">
+                <option value="">カテゴリを選択してください</option>
+                <?php mysqli_data_seek($categories, 0); ?>
+                <?php while ($category = mysqli_fetch_assoc($categories)) { ?>
+                  <option value="<?php echo $category['id'] ?>"><?php echo $category['name'] ?></option>
+                <?php } ?>
+              </select>
+            </span>
+          </div>
+          <div class="col-sm-2">
+            <button type="submit" class="btn btn-success">ToDoを追加する</button>
+          </div>
+        </form>
       </div>
 
       <!-- タスクセクション -->
@@ -227,7 +236,12 @@
                 <div class="checkbox" style="border-bottom:1px solid #ddd;">
                   <li class="ui-state-default">
                     <input type="checkbox" name="<?php echo $task['id'] ?>" value="finish">
-                    <span><?php  echo $task['title']; ?><i class="fa fa-exclamation-triangle"></i></span>
+                    <span>
+                      <?php  echo $task['title']; ?>
+                      <?php if( $task['deadline'] !='' &&$task['deadline'] < date('Y-m-d')){ ?>
+                      <i class="fa fa-exclamation-triangle"></i>
+                      <?php } ?>
+                    </span>
                   </li>
                   <span style="float: right"><a href="task/update.php?task_id=<?php echo $task['id']; ?>"><i class="fa fa-pencil-square-o"></i></a> <a href="task/delete.php?task_id=<?php echo $task['id']; ?>">
                     <i class="fa fa-ban"></i></a>
@@ -244,7 +258,7 @@
                 <div class="checkbox" style="border-bottom:1px solid #ddd;" >
                   <li>
                     <input type="checkbox" name="<?php echo $finishedTask['id']; ?>" value="finish" checked="checked">
-                    <span style="color:#A9A9A9"><?php  echo $finishedTask['title']; ?><i class="fa fa-exclamation-triangle"></i></span>
+                    <span style="color:#A9A9A9"><?php  echo $finishedTask['title']; ?></span>
                   </li>
                   <span style="float: right">
                     <a href="task/update.php?task_id=<?php echo $finishedTask['id']; ?>"><i class="fa fa-pencil-square-o"></i></a> <a href="task/delete.php?task_id=<?php echo $finishedTask['id']; ?>">
@@ -270,7 +284,7 @@
   <!-- フッター用コンテナ -->
   <div  class="container">
     <div class="row">
-      フッターパート
+      <!-- フッターパート -->
     </div>
   </div>
 
