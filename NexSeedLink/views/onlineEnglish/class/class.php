@@ -1,14 +1,15 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
-  <title>WebRTC 1 to 1 signaling</title>
+  <meta charset="UTF-8">
+  <title>オンライン英会話</title>
 </head>
 <body>
-  <button type="button" onclick="startVideo();">Start video</button>
-  <button type="button" onclick="stopVideo();">Stop video</button>
+  <button type="button" onclick="startVideo();">準備完了</button>
+  <button type="button" onclick="stopVideo();">ビデオ停止</button>
   &nbsp;&nbsp;&nbsp;&nbsp;
-  <button type="button" onclick="connect();">Connect</button>
-  <button type="button" onclick="hangUp();">Hang Up</button>
+  <button type="button" onclick="connect();">授業開始</button>
+  <button type="button" onclick="hangUp();">授業終了</button>
   <br />
   <div>
    <video id="local-video" autoplay style="width: 240px; height: 180px; border: 1px solid black;"></video>
@@ -16,27 +17,27 @@
   </div>
 
   <p>
-   SDP to send:<br />
-   <textarea id="text-for-send-sdp" rows="5" cols="100" disabled="1">SDP to send</textarea>
+<br />
+   <textarea id="text-for-send-sdp" rows="0" cols="0" disabled="1"></textarea>
   </p>
   <p>
-   SDP to receive:<br />
-   <textarea id="text-for-receive-sdp" rows="5" cols="100"></textarea><br />
-   <button type="button" onclick="onSDP();">Receive SDP</button>
+   <br />
+   <textarea id="text-for-receive-sdp" rows="0" cols="0"></textarea><br />
+   <button type="button" onclick="onSDP();"></button>
   </p>
 
   <p>
-   ICE Candidate to send:<br />
-   <textarea id="text-for-send-ice" rows="5" cols="100" disabled="1">ICE Candidate to send</textarea>
+<br />
+   <textarea id="text-for-send-ice" rows="0" cols="0" disabled="1"></textarea>
   </p>
   <p>
-   ICE Candidates to receive:<br />
-   <textarea id="text-for-receive-ice" rows="5" cols="100"></textarea><br />
-   <button type="button" onclick="onICE();">Receive ICE Candidates</button>
+<br />
+   <textarea id="text-for-receive-ice" rows="0" cols="0"></textarea><br />
+   <button type="button" onclick="onICE();"></button>
   </p>
 
   <!-- socket -->
-  <script src="socket.io.js"></script>
+  <script src="https://cdn.socket.io/socket.io-1.3.7.js"></script>
 
   <script>
   var localVideo = document.getElementById('local-video');
@@ -44,22 +45,37 @@
   var localStream = null;
   var peerConnection = null;
   var peerStarted = false;
-  var mediaConstraints = {'mandatory': {'OfferToReceiveAudio':false, 'OfferToReceiveVideo':true }};
+  var mediaConstraints = {'mandatory': {'OfferToReceiveAudio':true, 'OfferToReceiveVideo':true }};
 
 
   // ---- socket ------
   // create socket
   var socketReady = false;
-  var port = 9001;
-  var socket = io.connect('192.168.33.10:' + port + '/');
+  var socket = io.connect("https://nexseedlink-test.herokuapp.com/");
+
   // socket: channel connected
   socket.on('connect', onOpened)
         .on('message', onMessage);
 
-  function onOpened(evt) {
+function onOpened(evt) {
     console.log('socket opened.');
     socketReady = true;
+
+    var roomname = getRoomName(); // 会議室名を取得する
+    socket.emit('enter', roomname);
+}
+
+function getRoomName() { // たとえば、 URLに  ?roomname  とする
+  var url = document.location.href;
+  var args = url.split('?');
+  if (args.length > 1) {
+    var room = args[1];
+    if (room != "") {
+      return room;
+    }
   }
+  return "_defaultroom";
+}
 
   // socket: accept connection request
   function onMessage(evt) {
@@ -158,20 +174,20 @@
 
   // ---------------------- video handling -----------------------
   // start local video
-  function startVideo() {
-  navigator.webkitGetUserMedia({video: true, audio: false},
-    function (stream) { // success
-      localStream = stream;
-      localVideo.src = window.webkitURL.createObjectURL(stream);
-      localVideo.play();
-    localVideo.volume = 0;
-    },
-    function (error) { // error
-      console.error('An error occurred: [CODE ' + error.code + ']');
-      return;
+    function startVideo() {
+      navigator.webkitGetUserMedia({video: true, audio: true},  // <--- audio: true に変更
+        function (stream) { // success
+          localStream = stream;
+          localVideo.src = window.webkitURL.createObjectURL(stream);
+          localVideo.play();
+          localVideo.volume = 0;
+        },
+        function (error) { // error
+          console.error('An error occurred: [CODE ' + error.code + ']');
+          return;
+        }
+      );
     }
-  );
-  }
 
   // stop local video
   function stopVideo() {
@@ -180,14 +196,14 @@
   }
 
   // ---------------------- connection handling -----------------------
-  function prepareNewConnection() {
-    var pc_config = {"iceServers":[]};
-    var peer = null;
-    try {
-      peer = new webkitRTCPeerConnection(pc_config);
-    } catch (e) {
-      console.log("Failed to create peerConnection, exception: " + e.message);
-    }
+function prepareNewConnection(id) {
+  var pc_config = {"iceServers":[ {"url":"stun:stun.l.google.com:19302"} ]};
+  var peer = null;
+  try {
+    peer = new webkitRTCPeerConnection(pc_config);
+  } catch (e) {
+    console.log("Failed to create PeerConnection, exception: " + e.message);
+  }
 
     // send any ice candidates to the other peer
     peer.onicecandidate = function (evt) {
