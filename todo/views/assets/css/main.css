@@ -1,0 +1,21 @@
+.error {
+  color:red;
+  border:2px solid red;
+}
+
+/* タスク部分のデザイン */
+.deadline {
+  font-size: 80%;
+  color: #999;
+  margin-right:5px;
+}
+
+/* ページング */
+ul {
+  list-style: none;
+}
+
+li{
+  display: inline-block;
+}
+
