@@ -126,7 +126,7 @@
 
     <!-- タスクを追加する -->
     <div class="col-xs-9">
-      <form action="task/create" method="POST" accept-charset="utf-8">
+      <form action="create" method="POST" accept-charset="utf-8">
         <div class="col-sm-10">
           <span style="float: left;">
             <input type="text" name="task_title" placeholder="新しいToDoを入力" class="form-control add-todo" style="margin: 0px 0px 0px -15px; width: 445px;">
@@ -134,9 +134,9 @@
           <span style="float: right;">
             <select name="category_id" style="height: 25px; font-size: 30px; margin-top: 2px; ">
               <option value="">カテゴリを選択してください</option>
-              <?php mysqli_data_seek($categories, 0); ?>
-              <?php while ($category = mysqli_fetch_assoc($categories)) { ?>
-                <option value="<?php echo $category['id'] ?>"><?php echo $category['name'] ?></option>
+              <?php mysqli_data_seek($myCategories, 0); ?>
+              <?php while ($myCategory = mysqli_fetch_assoc($myCategories)) { ?>
+                <option value="<?php echo $myCategory['id'] ?>"><?php echo $myCategory['name'] ?></option>
               <?php } ?>
             </select>
           </span>
@@ -147,9 +147,9 @@
       </form>
     </div>
 
-    <!-- タスクセクション -->
+    <!-- 既存タスクセクション -->
     <div class="col-xs-9">
-      <form action="task/finish" method="post" accept-charset="utf-8">
+      <form action="finish" method="post" accept-charset="utf-8">
 
         <!-- 未完了タスク -->
         <hr>
@@ -218,11 +218,4 @@
   </div>
   <!-- メイン部分終了 -->
 <!-- 第1コンテナ終了 -->
-</div>
-
-<!-- フッター用コンテナ -->
-<div  class="container">
-  <div class="row">
-    フッターパート
-  </div>
 </div>

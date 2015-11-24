@@ -19,6 +19,13 @@
       include('./views/' . $resource . '/' . $action . '.php');
    ?>
 
+   <!-- フッター用コンテナ -->
+   <div  class="container">
+     <div class="row">
+       フッターパート
+     </div>
+   </div>
+
    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 

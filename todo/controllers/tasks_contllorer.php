@@ -27,18 +27,10 @@
                 $_SESSION['category'] = NULL;
               }
 
-              // ログイン判定
-              if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
-                // ログインしている
-                $_SESSION['time'] = time();
-                $sql = $Task->findUser();
-                $record = mysqli_query($this->db,$sql) or die(mysqli_error($this->db));
-                $user = mysqli_fetch_assoc($record);
-              } else {
-                // ログインしてない
-                header('Location:../user/login');
-                exit();
-              }
+              // ユーザー名の取得（表示用）
+              $sql = $Task->findUser();
+              $record = mysqli_query($this->db,$sql) or die(mysqli_error($this->db));
+              $user = mysqli_fetch_assoc($record);
 
               //未完了タスクを取得する(表示用)
               $sql = $Task->findUnfinishedTasks();
@@ -53,6 +45,43 @@
               $myCategories = mysqli_query($this->db, $sql) or die(mysqli_error($this->db));
 
               return array($user,$unfinishedTasks,$finishedTasks,$myCategories);
+        }
+
+        public function create(){
+            $Task = new Task($this->db,$this->plural_resorce);
+            // タスクを記録する
+            if (isset($_POST['task_title']) && $_POST['task_title'] != '') {
+                $sql = $Task->createTask();
+                mysqli_query($this->db, $sql) or die(mysqli_error($this->db));
+            }
+            header('Location: index');
+            exit();
+        }
+
+        public function finishTasks(){
+            $Task = new Task($this->db,$this->plural_resorce);
+            if (isset($_SESSION['id'])) {
+                $id = $_SESSION['id'];
+
+                // タスクを一旦全部取り出す
+                $sql = $Task->findAllTasks($id);
+                $record = mysqli_query($this->db, $sql);
+
+                while ($table = mysqli_fetch_assoc($record)) {
+                    // チェックされたもののみに処理を行う
+                    $taskId = $table['id'];
+                    $sql = $Task->finishTasks($taskId);
+                    mysqli_query($this->db, $sql)  or die(mysqli_error($this->db));
+                }
+            }
+            if (isset($_POST['category_id'])) {
+                $param = $_POST['category_id'];
+                header("Location: ../task/index?category_id={$param}");
+                exit();
+            } else {
+                header('Location: ../task/index');
+                exit();
+            }
         }
 
     }

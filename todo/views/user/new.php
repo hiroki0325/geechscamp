@@ -38,5 +38,5 @@
             <input type="password" name="password2" size="10" maxlength="20">
           </dd>
         </dl>
-        <div><input type="submit" value="入力内容を確認する"></div>
+        <div><input type="submit" value="アカウントを作成する"></div>
   </form>

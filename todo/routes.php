@@ -18,6 +18,18 @@
         $id = $params[2];
     }
 
+    //// +++ ログイン判定 +++ ////
+    if ($action != "new" && $action != "login" && $action != "thanks" ) {
+        if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
+          // ログインしている
+          $_SESSION['time'] = time();
+        } else {
+          // ログインしてない
+          header('Location:../user/login');
+          exit();
+        }
+    }
+
     // リソース名を複数形に変換する処理
     $plural_resorce = singular2plural($resource);
 
@@ -29,9 +41,20 @@
 
     // アクション名がcreateなら新規作成処理をする
     if ($action == 'create') {
-        if ($resource == 'category') {
+        if ($resource == 'task') {
+            $TasksController = new TasksController($db, $plural_resorce);
+            $TasksController->create();
+        }elseif($resource == 'category'){
             $CategoriesController = new CategoriesController($db, $plural_resorce);
             $CategoriesController->create();
+        }
+    }
+
+    // アクション名がfinishならタスクの完了情報を更新する
+    if ($action == 'finish') {
+        if ($resource == 'task') {
+            $TasksController = new TasksController($db, $plural_resorce);
+            $TasksController->finishTasks();
         }
     }
 
