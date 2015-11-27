@@ -9,6 +9,9 @@
 <!-- ビューポートの設定 -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<!-- JavaScriptの読み込み -->
+<script src="../views/assets/js/main.js"></script>
+
 <!-- 本体 -->
 <div class="container">
 
@@ -156,7 +159,7 @@
 
     <!-- モーダルウィンドウのコンテンツ開始 -->
     <div id="modal-content-<?PHP echo $unfinishedTask['id']; ?>" class="modal-content">
-      <form action="edit" method="post" accept-charset="utf-8">
+      <form action="update" method="post" accept-charset="utf-8">
         <input type="hidden" name="task_id" value="<?php echo $unfinishedTask['id'] ?>">
         <?php if (isset($_REQUEST['category_id'])): ?>
           <input type="hidden" name="category_id_for_index" value="<?php echo $_REQUEST['category_id']; ?>">
@@ -194,7 +197,7 @@
 
     <!-- モーダルウィンドウのコンテンツ開始 -->
     <div id="modal-content-<?php echo $finishedTask['id']; ?>" class="modal-content">
-      <form action="edit" method="post" accept-charset="utf-8">
+      <form action="update" method="post" accept-charset="utf-8">
         <input type="hidden" name="task_id" value="<?php echo $finishedTask['id']; ?>">
         <?php if (isset($_REQUEST['category_id'])): ?>
           <input type="hidden" name="category_id_for_index" value="<?php echo $_REQUEST['category_id']; ?>">
@@ -302,7 +305,3 @@
   <!-- メイン部分終了 -->
 <!-- 第1コンテナ終了 -->
 </div>
-
-<!-- JavaScriptの読み込み -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-<script src="../views/assets/js/main.js"></script>
