@@ -3,6 +3,14 @@
   border:2px solid red;
 }
 
+.line{
+  border-top:1px solid #999999;
+  clear:left;
+  font-size:0;
+  height:0;
+  margin-top: 10px;
+}
+
 /* タスク部分のデザイン */
 .deadline {
   font-size: 80%;

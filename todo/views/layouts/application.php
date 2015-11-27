@@ -19,18 +19,25 @@
 
 </head>
 <body>
-  <?php
-      include('./views/' . $resource . '/' . $action . '.php');
-   ?>
 
-   <!-- フッター用コンテナ -->
-   <div  class="container">
-     <div class="row">
-       フッターパート
-     </div>
-   </div>
+  <?php include('./views/' . $resource . '/' . $action . '.php'); ?>
 
-   <!-- Include all compiled plugins (below), or include individual files as needed -->
+  <!-- フッター用コンテナ -->
+  <div  class="container">
+    <div class="row">
+      <!-- フッターメニュー -->
+      <div class="line"></div>
+      <ul style="text-align: center;">
+        <li style="margin-right: 20px;"><a href="">hoge</a></li>
+        <li style="margin-right: 20px;"><a href="">fuga</a></li>
+        <li style="margin-right: 20px;"><a href="">moge</a></li>
+        <li><a href="">pugya</a></li>
+      </ul>
+    </div>
+  </div>
+
+   <!-- bootstrapメインjsの読み込み -->
    <script src="../views/assets/js/bootstrap.js"></script>
+
 </body>
 </html>

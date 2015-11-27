@@ -156,77 +156,69 @@
 
     <!-- 未完了タスク用モーダルウィンドウを用意 -->
     <?php while ($unfinishedTask = mysqli_fetch_assoc($unfinishedTasks)) { ?>
-
-    <!-- モーダルウィンドウのコンテンツ開始 -->
-    <div id="modal-content-<?PHP echo $unfinishedTask['id']; ?>" class="modal-content">
-      <form action="update" method="post" accept-charset="utf-8">
-        <input type="hidden" name="task_id" value="<?php echo $unfinishedTask['id'] ?>">
-        <?php if (isset($_REQUEST['category_id'])): ?>
-          <input type="hidden" name="category_id_for_index" value="<?php echo $_REQUEST['category_id']; ?>">
-        <?php endif ?>
-        <label for="modified_title" class="require">タイトル</label><br>
-        <input type="text" name="modified_title" value=<?php echo $unfinishedTask['title']; ?> required><br>
-        <label for="" class="">カテゴリ</label><br>
-        <select name="category_id">
-          <option value="">カテゴリを選択してください</option>
-          <?php mysqli_data_seek($myCategories, 0); ?>
-          <?php while ($category = mysqli_fetch_assoc($myCategories)) { ?>
-            <option value="<?php echo $category['id'] ?>" <?php if($category['id'] == $unfinishedTask['category_id']){echo "selected";} ?> >
-              <?php echo $category['name'] ?>
-            </option>
-          <?php } ?>
-        </select><br>
-        <label for="detail">詳細</label><br>
-        <input type="text" name="detail" value=<?php echo $unfinishedTask['detail']; ?> ><br>
-        <label for="deadline">期限</label><br>
-        <input type="date" name="deadline" value=<?php echo $unfinishedTask['deadline']; ?> ><br>
-        <label for="">完了</label>
-        <input type="checkbox" name="finish_flg" value="1">
-        <br>
-        <input type="submit" value="保存して閉じる">
-      </form>
-
-    </div>
-    <!-- モーダルウィンドウのコンテンツ終了 -->
-
+      <div id="modal-content-<?PHP echo $unfinishedTask['id']; ?>" class="modal-content">
+        <form action="update" method="post" accept-charset="utf-8">
+          <input type="hidden" name="task_id" value="<?php echo $unfinishedTask['id'] ?>">
+          <?php if (isset($_REQUEST['category_id'])): ?>
+            <input type="hidden" name="category_id_for_index" value="<?php echo $_REQUEST['category_id']; ?>">
+          <?php endif ?>
+          <label for="modified_title" class="require">タイトル</label><br>
+          <input type="text" name="modified_title" value=<?php echo $unfinishedTask['title']; ?> required><br>
+          <label for="" class="">カテゴリ</label><br>
+          <select name="category_id">
+            <option value="">カテゴリを選択してください</option>
+            <?php mysqli_data_seek($myCategories, 0); ?>
+            <?php while ($category = mysqli_fetch_assoc($myCategories)) { ?>
+              <option value="<?php echo $category['id'] ?>" <?php if($category['id'] == $unfinishedTask['category_id']){echo "selected";} ?> >
+                <?php echo $category['name'] ?>
+              </option>
+            <?php } ?>
+          </select><br>
+          <label for="detail">詳細</label><br>
+          <input type="text" name="detail" value=<?php echo $unfinishedTask['detail']; ?> ><br>
+          <label for="deadline">期限</label><br>
+          <input type="date" name="deadline" value=<?php echo $unfinishedTask['deadline']; ?> ><br>
+          <label for="">完了</label>
+          <input type="checkbox" name="finish_flg" value="1">
+          <br>
+          <input type="submit" value="保存して閉じる">
+        </form>
+      </div>
     <?php }?>
     <!-- 未完了タスク用モーダルウィンドウを用意終了 -->
 
     <!-- 完了済タスク用モーダルウィンドウを用意 -->
     <?php while ($finishedTask = mysqli_fetch_assoc($finishedTasks)) { ?>
-
-    <!-- モーダルウィンドウのコンテンツ開始 -->
-    <div id="modal-content-<?php echo $finishedTask['id']; ?>" class="modal-content">
-      <form action="update" method="post" accept-charset="utf-8">
-        <input type="hidden" name="task_id" value="<?php echo $finishedTask['id']; ?>">
-        <?php if (isset($_REQUEST['category_id'])): ?>
-          <input type="hidden" name="category_id_for_index" value="<?php echo $_REQUEST['category_id']; ?>">
-        <?php endif ?>
-        <label for="modified_title" class="require">タイトル</label><br>
-        <input type="text" name="modified_title" value=<?php echo $finishedTask['title']; ?> required><br>
-        <label for="" class="">カテゴリ</label><br>
-        <select name="category_id">
-          <option value="">カテゴリを選択してください</option>
-          <?php mysqli_data_seek($myCategories, 0); ?>
-          <?php while ($category = mysqli_fetch_assoc($myCategories)) { ?>
-            <option value="<?php echo $category['id'] ?>" <?php if($category['id'] == $finishedTask['category_id']){echo "selected";} ?> >
-              <?php echo $category['name'] ?>
-            </option>
-          <?php } ?>
-        </select><br>
-        <label for="detail">詳細</label><br>
-        <input type="text" name="detail" value=<?php echo $finishedTask['detail']; ?> ><br>
-        <label for="deadline">期限</label><br>
-        <input type="date" name="deadline" value=<?php echo $finishedTask['deadline']; ?> ><br>
-        <label for="">完了</label>
-        <input type="checkbox" name="finish_flg" value="1" checked="checked">
-        <br>
-        <input type="submit" value="変更を確定する">
-      </form>
-    </div>
-    <!-- モーダルウィンドウのコンテンツ終了 -->
+      <div id="modal-content-<?php echo $finishedTask['id']; ?>" class="modal-content">
+        <form action="update" method="post" accept-charset="utf-8">
+          <input type="hidden" name="task_id" value="<?php echo $finishedTask['id']; ?>">
+          <?php if (isset($_REQUEST['category_id'])): ?>
+            <input type="hidden" name="category_id_for_index" value="<?php echo $_REQUEST['category_id']; ?>">
+          <?php endif ?>
+          <label for="modified_title" class="require">タイトル</label><br>
+          <input type="text" name="modified_title" value=<?php echo $finishedTask['title']; ?> required><br>
+          <label for="" class="">カテゴリ</label><br>
+          <select name="category_id">
+            <option value="">カテゴリを選択してください</option>
+            <?php mysqli_data_seek($myCategories, 0); ?>
+            <?php while ($category = mysqli_fetch_assoc($myCategories)) { ?>
+              <option value="<?php echo $category['id'] ?>" <?php if($category['id'] == $finishedTask['category_id']){echo "selected";} ?> >
+                <?php echo $category['name'] ?>
+              </option>
+            <?php } ?>
+          </select><br>
+          <label for="detail">詳細</label><br>
+          <input type="text" name="detail" value=<?php echo $finishedTask['detail']; ?> ><br>
+          <label for="deadline">期限</label><br>
+          <input type="date" name="deadline" value=<?php echo $finishedTask['deadline']; ?> ><br>
+          <label for="">完了</label>
+          <input type="checkbox" name="finish_flg" value="1" checked="checked">
+          <br>
+          <input type="submit" value="変更を確定する">
+        </form>
+      </div>
     <?php }?>
-    <!-- 完了済タスク用モーダルウィンドウを用意終了 -->
+    <!-- 完了済タスク用モーダルウィンドウ終了 -->
 
     <!-- 既存タスクセクション -->
     <div class="col-xs-9">
