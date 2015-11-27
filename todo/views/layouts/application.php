@@ -6,16 +6,14 @@
 
   <!-- CSS -->
   <link rel="stylesheet" href="../views/assets/css/bootstrap.css">
+  <link rel="stylesheet" href="../views/assets/css/sidemenu.css">
   <link rel="stylesheet" href="../views/assets/font-awesome/css/font-awesome.css">
   <link rel="stylesheet" href="../views/assets/css/main.css">
-  <link rel="stylesheet" href="../views/assets/css/sideMenu.css">
   <link rel="stylesheet" href="../views/assets/jquery/jquery-ui.min.css">
 
   <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-
-  <!-- JavaScript -->
-  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+  <script type="text/javascript" src="../views/assets/jquery/jquery.js"></script>
+  <script type="text/javascript" src="../views/assets/jquery/jquery-ui.min.js"></script>
 
 </head>
 <body>

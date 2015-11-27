@@ -9,9 +9,9 @@
     return mb_ereg_replace("(https?)(://[[:alnum:]\+\$\;\?\.%,!#~*/:@&=_-]+)",'<a href="\1\2">\1\2</a>', $value);
   }
 
-  // 期限切れタスクの件数表示ファンクション
-   function cnt($db, $category){
-   $sql = sprintf('SELECT COUNT(*) AS cnt FROM tasks WHERE deadline < NOW() AND category_id=%d AND finish_flg=0',
+  // 未完了タスクの件数表示ファンクション
+   function countUnfinishedTaskInCategory($db, $category){
+   $sql = sprintf('SELECT COUNT(*) AS cnt FROM tasks WHERE category_id=%d AND finish_flg=0',
          $category['id']
      );
    $cnt = mysqli_query($db, $sql) or die(mysqli_error($db));

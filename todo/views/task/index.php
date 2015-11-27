@@ -82,7 +82,7 @@
                         <i class="fa fa-file-text-o"></i>
                         <?php  echo $myCategory['name']; ?>
                       </a>
-                      <?php $taskNum = cnt($db, $myCategory);?>
+                      <?php $taskNum = countUnfinishedTaskInCategory($db, $myCategory);?>
                       <?php if($taskNum['cnt'] != 0){ ?>
                         <span class="badge">
                           <?php echo $taskNum['cnt']; ?>
