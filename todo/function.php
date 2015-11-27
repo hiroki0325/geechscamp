@@ -83,4 +83,11 @@
        }
        return $plural;
    }
+
+   // タスク編集用のjavascript生成ファンクション
+   // function editTask(){
+
+   // }
+
+
  ?>

@@ -59,8 +59,12 @@
     }
 
     // アクション名がupdateならアップデート処理をする
+    //// taskに関しては現状editページが存在しているため、実質こちらのループに入ることはない
     if ($action == 'update') {
-        if ($resource == 'category') {
+        if ($resource == 'task') {
+            $TasksController = new TasksController($db, $plural_resorce);
+            $TasksController->update();
+        }elseif($resource == 'category'){
             $CategoriesController = new CategoriesController($db, $plural_resorce);
             $CategoriesController->update();
         }
@@ -68,7 +72,10 @@
 
     // アクション名がdeleteなら削除処理する
     if ($action == 'delete') {
-        if ($resource == 'category') {
+        if ($resource == 'task') {
+            $TasksController = new TasksController($db, $plural_resorce);
+            $TasksController->delete();
+        }elseif($resource == 'category'){
             $CategoriesController = new CategoriesController($db, $plural_resorce);
             $CategoriesController->delete();
         }

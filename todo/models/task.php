@@ -110,5 +110,49 @@
             }
             return $sql;
         }
+        public function update(){
+            // チェックがあれば完了にする、なければ未完了にする
+            if (isset($_POST['finish_flg'])){
+                $sql = sprintf('UPDATE %s SET title="%s", category_id=%d, detail="%s", deadline=%s, finish_flg=1, modified=NOW() WHERE id=%d AND user_id=%d',
+                    $this->plural_resorce,
+                    mysqli_real_escape_string($this->db, $_POST['modified_title']),
+                    mysqli_real_escape_string($this->db, $_POST['category_id']),
+                    mysqli_real_escape_string($this->db, $_POST['detail']),
+                    $_POST['deadline'],
+                    mysqli_real_escape_string($this->db, $_POST['task_id']),
+                    mysqli_real_escape_string($this->db, $_SESSION['id'])
+                );
+            }else{
+                $sql = sprintf('UPDATE %s SET title="%s", category_id=%d, detail="%s", deadline=%s, finish_flg=0, modified=NOW() WHERE id=%d AND user_id=%d',
+                    $this->plural_resorce,
+                    mysqli_real_escape_string($this->db, $_POST['modified_title']),
+                    mysqli_real_escape_string($this->db, $_POST['category_id']),
+                    mysqli_real_escape_string($this->db, $_POST['detail']),
+                    $_POST['deadline'],
+                    mysqli_real_escape_string($this->db, $_POST['task_id']),
+                    mysqli_real_escape_string($this->db, $_SESSION['id'])
+                );
+            }
+            return $sql;
+        }
+
+        // タスク削除時にそのタスクが本当にユーザー自身のカテゴリかどうかを確認するSQL文を返すメソッド
+        public function check($id){
+            $sql = sprintf('SELECT * FROM %s WHERE id=%d',
+                $this->plural_resorce,
+                mysqli_real_escape_string($this->db, $id)
+            );
+            return $sql;
+        }
+
+        // カテゴリを削除するSQL文を返すメソッド
+        public function delete($id){
+            $sql = sprintf('DELETE FROM %s WHERE id=%d',
+                $this->plural_resorce,
+                mysqli_real_escape_string($this->db, $id)
+            );
+            return $sql;
+        }
+
     }
 ?>

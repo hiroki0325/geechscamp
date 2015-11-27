@@ -1,13 +1,15 @@
 <?php
     $tasksController = new tasksController($db, $plural_resorce);
-    // ToDo 返り値をまとめて受け取らなければならない説
     $tasks = $tasksController->index();
     $user = $tasks[0];
     $unfinishedTasks = $tasks[1];
     $finishedTasks = $tasks[2];
     $myCategories = $tasks[3];
 ?>
+<!-- ビューポートの設定 -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<!-- 本体 -->
 <div class="container">
 
   <!-- 1行目 -->
@@ -28,13 +30,15 @@
             タスク一覧
           <?php endif; ?>
         </span>
-        <div class="input-group" style="float: right;">
-          <form action="" method="get">
+
+         <div class="input-group" style="float: right;">
+           <!-- Todo 検索窓を一旦外した -->
+           <!--<form action="" method="get">
             <input type="text" class="form-control" name="search" placeholder="タスクを検索" style="width:160px; height:27px;" >
             <span class="input-group-btn">
               <button class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>
             </span>
-          </form>
+          </form> -->
         </div>
       </div>
       <div class="col-sm-2">
@@ -147,6 +151,80 @@
       </form>
     </div>
 
+    <!-- 未完了タスク用モーダルウィンドウを用意 -->
+    <?php while ($unfinishedTask = mysqli_fetch_assoc($unfinishedTasks)) { ?>
+
+    <!-- モーダルウィンドウのコンテンツ開始 -->
+    <div id="modal-content-<?PHP echo $unfinishedTask['id']; ?>" class="modal-content">
+      <form action="edit" method="post" accept-charset="utf-8">
+        <input type="hidden" name="task_id" value="<?php echo $unfinishedTask['id'] ?>">
+        <?php if (isset($_REQUEST['category_id'])): ?>
+          <input type="hidden" name="category_id_for_index" value="<?php echo $_REQUEST['category_id']; ?>">
+        <?php endif ?>
+        <label for="modified_title" class="require">タイトル</label><br>
+        <input type="text" name="modified_title" value=<?php echo $unfinishedTask['title']; ?> required><br>
+        <label for="" class="">カテゴリ</label><br>
+        <select name="category_id">
+          <option value="">カテゴリを選択してください</option>
+          <?php mysqli_data_seek($myCategories, 0); ?>
+          <?php while ($category = mysqli_fetch_assoc($myCategories)) { ?>
+            <option value="<?php echo $category['id'] ?>" <?php if($category['id'] == $unfinishedTask['category_id']){echo "selected";} ?> >
+              <?php echo $category['name'] ?>
+            </option>
+          <?php } ?>
+        </select><br>
+        <label for="detail">詳細</label><br>
+        <input type="text" name="detail" value=<?php echo $unfinishedTask['detail']; ?> ><br>
+        <label for="deadline">期限</label><br>
+        <input type="date" name="deadline" value=<?php echo $unfinishedTask['deadline']; ?> ><br>
+        <label for="">完了</label>
+        <input type="checkbox" name="finish_flg" value="1">
+        <br>
+        <input type="submit" value="保存して閉じる">
+      </form>
+
+    </div>
+    <!-- モーダルウィンドウのコンテンツ終了 -->
+
+    <?php }?>
+    <!-- 未完了タスク用モーダルウィンドウを用意終了 -->
+
+    <!-- 完了済タスク用モーダルウィンドウを用意 -->
+    <?php while ($finishedTask = mysqli_fetch_assoc($finishedTasks)) { ?>
+
+    <!-- モーダルウィンドウのコンテンツ開始 -->
+    <div id="modal-content-<?php echo $finishedTask['id']; ?>" class="modal-content">
+      <form action="edit" method="post" accept-charset="utf-8">
+        <input type="hidden" name="task_id" value="<?php echo $finishedTask['id']; ?>">
+        <?php if (isset($_REQUEST['category_id'])): ?>
+          <input type="hidden" name="category_id_for_index" value="<?php echo $_REQUEST['category_id']; ?>">
+        <?php endif ?>
+        <label for="modified_title" class="require">タイトル</label><br>
+        <input type="text" name="modified_title" value=<?php echo $finishedTask['title']; ?> required><br>
+        <label for="" class="">カテゴリ</label><br>
+        <select name="category_id">
+          <option value="">カテゴリを選択してください</option>
+          <?php mysqli_data_seek($myCategories, 0); ?>
+          <?php while ($category = mysqli_fetch_assoc($myCategories)) { ?>
+            <option value="<?php echo $category['id'] ?>" <?php if($category['id'] == $finishedTask['category_id']){echo "selected";} ?> >
+              <?php echo $category['name'] ?>
+            </option>
+          <?php } ?>
+        </select><br>
+        <label for="detail">詳細</label><br>
+        <input type="text" name="detail" value=<?php echo $finishedTask['detail']; ?> ><br>
+        <label for="deadline">期限</label><br>
+        <input type="date" name="deadline" value=<?php echo $finishedTask['deadline']; ?> ><br>
+        <label for="">完了</label>
+        <input type="checkbox" name="finish_flg" value="1" checked="checked">
+        <br>
+        <input type="submit" value="変更を確定する">
+      </form>
+    </div>
+    <!-- モーダルウィンドウのコンテンツ終了 -->
+    <?php }?>
+    <!-- 完了済タスク用モーダルウィンドウを用意終了 -->
+
     <!-- 既存タスクセクション -->
     <div class="col-xs-9">
       <form action="finish" method="post" accept-charset="utf-8">
@@ -154,12 +232,12 @@
         <!-- 未完了タスク -->
         <hr>
         <div class="todolist not-done">
-          <ul id="sortable" class="list-unstyled">
+          <ul id="" class="list-unstyled">
+            <?php mysqli_data_seek($unfinishedTasks, 0); ?>
             <?php while ($unfinishedTask = mysqli_fetch_assoc($unfinishedTasks)) { ?>
               <div class="checkbox" style="border-bottom:1px solid #ddd;">
-                <li class="ui-state-default">
+                <li class="">
                   <input type="checkbox" name="<?php echo $unfinishedTask['id'] ?>" value="finish">
-
                   <?php if( $unfinishedTask['deadline'] !='' &&$unfinishedTask['deadline'] < date('Y-m-d')){ ?>
                     <span  style="color: #ff0000; ">
                       <?php  echo $unfinishedTask['title']; ?>
@@ -178,10 +256,10 @@
                       <?php echo $unfinishedTask['deadline'] ?>
                     </span>
                   <?php } ?>
-                  <a href="task/update?task_id=<?php echo $unfinishedTask['id']; ?>">
+                  <a class="modal-syncer button-link" data-target="modal-content-<?PHP echo $unfinishedTask['id']; ?>">
                     <i class="fa fa-pencil-square-o"></i>
                   </a>
-                  <a href="task/delete?task_id=<?php echo $unfinishedTask['id']; ?>">
+                  <a href="../task/delete?task_id=<?php echo $unfinishedTask['id']; ?>">
                     <i class="fa fa-ban"></i>
                   </a>
                 </span>
@@ -193,6 +271,7 @@
         <!-- 完了済タスク -->
         <div class="todolist">
           <ul id="done-items" class="list-unstyled">
+            <?php mysqli_data_seek($finishedTasks, 0); ?>
             <?php while ($finishedTask = mysqli_fetch_assoc($finishedTasks)) { ?>
               <div class="checkbox" style="border-bottom:1px solid #ddd;" >
                 <li>
@@ -200,8 +279,12 @@
                   <span style="color:#A9A9A9"><?php  echo $finishedTask['title']; ?></span>
                 </li>
                 <span style="float: right">
-                  <a href="task/update?task_id=<?php echo $finishedTask['id']; ?>"><i class="fa fa-pencil-square-o"></i></a> <a href="task/delete?task_id=<?php echo $finishedTask['id']; ?>">
-                  <i class="fa fa-ban"></i>
+
+                  <a class="modal-syncer button-link" data-target="modal-content-<?PHP echo $finishedTask['id']; ?>">
+                    <i class="fa fa-pencil-square-o"></i>
+                  </a>
+                  <a href="../task/delete?task_id=<?php echo $finishedTask['id']; ?>">
+                    <i class="fa fa-ban"></i>
                  </a>
                </span>
               </div>
@@ -219,3 +302,7 @@
   <!-- メイン部分終了 -->
 <!-- 第1コンテナ終了 -->
 </div>
+
+<!-- JavaScriptの読み込み -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="../views/assets/js/main.js"></script>

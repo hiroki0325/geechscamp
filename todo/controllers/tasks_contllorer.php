@@ -84,6 +84,51 @@
             }
         }
 
+        public function update(){
+            $Task = new Task($this->db,$this->plural_resorce);
+
+            // 情報が送信された後なら、このあとの処理を実行する
+            if (isset($_POST['modified_title'])) {
+
+                // 送信内容の検査
+                if ($_POST['deadline'] =='') {
+                  $_POST['deadline'] ="NULL";
+                }else{
+                  $_POST['deadline'] = mysqli_real_escape_string($this->db, $_POST['deadline']);
+                  $_POST['deadline'] ='"'.$_POST['deadline'].'"';
+                }
+
+                // タスク内容のアップデート処理を実行
+                $sql = $Task->update();
+                mysqli_query($this->db, $sql) or die(mysqli_error($this->db));
+                if ($_POST['category_id_for_index'] !="") {
+                    $param = $_POST['category_id_for_index'];
+                    header("Location: ../task/index?category_id={$param}");
+                    exit();
+                } else {
+                    header('Location: ../task/index');
+                    exit();
+                }
+            }
+        }
+
+        public function delete(){
+            $Task = new Task($this->db,$this->plural_resorce);
+            $id = $_REQUEST['task_id'];
+
+            // タスクを検査する(本当にユーザー自身のタスクかどうか)
+            $sql = $Task->check($id);
+            $record = mysqli_query($this->db, $sql) or die(mysqli_error($this->db));
+            $table = mysqli_fetch_assoc($record);
+            if ($table['user_id'] == $_SESSION['id']) {
+                // タスクの削除
+                $sql = $Task->delete($id);
+                mysqli_query($this->db, $sql) or die(mysqli_error($this->db));
+            }
+            header('Location: ../task/index');
+            exit();
+        }
+
     }
 
 ?>
